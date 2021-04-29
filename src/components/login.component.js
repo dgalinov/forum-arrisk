@@ -17,33 +17,56 @@ const Login = (props) => {
         passwordError,
     } = props;
     return (
-        <section className="login">
-            <div className="loginController">
-                <label>User Name</label>
-                <input type="text" autoFocus required value={username} onChange={(e) => setUsername(e.target.value)} />
-                <p className="errorMsg">{usernameError}</p>
-                <label>Email</label>
-                <input type="text" autoFocus required value={email} onChange={(e) => setEmail(e.target.value)} />
-                <p className="errorMsg">{emailError}</p>
-                <label>Password</label>
-                <input type="password" autoFocus required value={password} onChange={(e) => setPassword(e.target.value)} />
-                <p className="errorMsg">{passwordError}</p>
-                <div className="btnContainer">
-                    {hasAccount ? (
-                        <>
-                            <button onClick={handleSignup}>Sign up</button>
-                            <p>Have an account ? <span onClick={() => setHasAccount(!hasAccount)}>Sign in</span></p>
-                        </>
-                    ) : (
-                        <>
-                            <button onClick={handleLogin}>Sign in</button>
-                            <p>Don't have an account ? <span onClick={() => setHasAccount(!hasAccount)}>Sign up</span></p>
-                            
-                        </>
-                    )}
+        <div class="container">
+            <div class="col-lg-8">
+                <div class="panel">
+                    <div class="panel-content panel-bio">
+                        {hasAccount ? (
+                            <>
+                                <h1>Register</h1>
+                                <div className="mb-3">
+                                    <label for="username" class="form-label">Name</label>
+                                    <input type="text" id="username" className="form-control" placeholder="name" autoFocus required value={username} onChange={(e) => setUsername(e.target.value)} />
+                                    <p className="errorMsg">{usernameError}</p>
+                                </div>
+                                <div className="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="text" id="email" className="form-control" placeholder="email@example.com" autoFocus required value={email} onChange={(e) => setEmail(e.target.value)} />
+                                    <p className="errorMsg">{emailError}</p>
+                                </div>
+                                <div className="mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input type="password" id="password" class="form-control" placeholder="********" autoFocus required value={password} onChange={(e) => setPassword(e.target.value)} />
+                                    <p className="errorMsg">{passwordError}</p>
+                                </div>
+                                <div className="btnContainer">
+                                    <button class="btn btn-warning" onClick={handleSignup}>Sign up</button>
+                                    <p>Have an account ? <span class="btn btn-outline-warning" onClick={() => setHasAccount(!hasAccount)}>Sign in</span></p>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <h1>Login</h1>
+                                <div className="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="text" id="email" className="form-control" placeholder="email@example.com" autoFocus required value={email} onChange={(e) => setEmail(e.target.value)} />
+                                    <p className="errorMsg">{emailError}</p>
+                                </div>
+                                <div className="mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input type="password" id="password" class="form-control" placeholder="********" autoFocus required value={password} onChange={(e) => setPassword(e.target.value)} />
+                                    <p className="errorMsg">{passwordError}</p>
+                                </div>
+                                <div className="btnContainer">
+                                    <button class="btn btn-warning" onClick={handleLogin}>Sign in</button>
+                                    <p>Don't have an account ? <span class="btn btn-outline-warning" onClick={() => setHasAccount(!hasAccount)}>Sign up</span></p>
+                                </div>
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
-        </section>
+        </div>
     );
 };
 

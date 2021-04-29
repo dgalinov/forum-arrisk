@@ -71,30 +71,31 @@ const App = () => {
             break;
       }
       });
+      handleProfile();
   };
-  // const handleProfile = () => {
-  //   firebase.firestore().collection("users").add({
-  //       UID: user.uid,
-  //       username: username,
-  //       created_at: dateTime
-  //   })
-  //   .then((docRef) => {
-  //       // console.log("Document written with ID: ", docRef.id);
-  //   })
-  //   .catch((error) => {
-  //       setUsernameError(error);
-  //       // console.error("Error adding document: ", error);
-  //   });
-  // }
+  const handleProfile = () => {
+    firebase.firestore().collection("users").add({
+        UID: email,
+        username: username,
+        created_at: dateTime
+    })
+    .then((docRef) => {
+        // console.log("Document written with ID: ", docRef.id);
+    })
+    .catch((error) => {
+        setUsernameError(error);
+        // console.error("Error adding document: ", error);
+    });
+  }
   const handleLogout = () => {
     firebase.auth().signOut();
+    setUser('');
   };
   const authListener = () => {
     firebase.auth().onAuthStateChanged(user => {
       if(user) {
         clearInputs();
         setUser(user);
-        // handleProfile();
       } else {
         setUser('');
       }
@@ -140,29 +141,37 @@ const App = () => {
           </>
         }
       </Navbar>
-      <div className="container mt-3">
+      <div className="container mt-3 container-sama">
         {user ? (
           <Switch>
             <Route exact path={["/", "/home"]} component={HomePage} />
             <Route exact path="/forum" component={ForumList} />
             <Route exact path="/add" component={AddForum} />
-            <Route exact path="/profile" component={Profile} />
+            <Route path="/profile" render={(props) => (
+              <Profile {...props} isAuthed={true} user= { user } />
+            )} />
           </Switch>
         ) : (
-            <Login 
-            username = { username }
-            setUsername = { setUsername }
-            email = { email } 
-            setEmail = { setEmail } 
-            password = { password }
-            setPassword = { setPassword } 
-            handleLogin = { handleLogin } 
-            handleSignup = { handleSignup } 
-            hasAccount = { hasAccount } 
-            setHasAccount = { setHasAccount }
-            usernameError = { usernameError }
-            emailError = { emailError }
-            passwordError = { passwordError }/>
+          <Switch>
+            <Route exact path={["/", "/home"]} component={HomePage} />
+            <Route path="/login" render={() => (
+              <Login 
+              username = { username }
+              setUsername = { setUsername }
+              email = { email } 
+              setEmail = { setEmail } 
+              password = { password }
+              setPassword = { setPassword } 
+              handleLogin = { handleLogin } 
+              handleSignup = { handleSignup } 
+              hasAccount = { hasAccount } 
+              setHasAccount = { setHasAccount }
+              usernameError = { usernameError }
+              emailError = { emailError }
+              passwordError = { passwordError }/>
+            )} />
+          </Switch>
+            
         )}
       </div>
       <Footer />

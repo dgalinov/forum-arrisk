@@ -1,60 +1,63 @@
+* {
+    font-family: Titillium, serif;
+}
+
 .App {
-  text-align: center;
+    text-align: center;
 }
 
 .App-logo {
-  height: 40vmin;
-  pointer-events: none;
+    height: 40vmin;
+    pointer-events: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+    .App-logo {
+        animation: App-logo-spin infinite 20s linear;
+    }
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
 }
 
 .App-link {
-  color: #61dafb;
+    color: #61dafb;
 }
 
 @keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* FORUM CSS FORMULARIO */
-
 .container h2 {
-  text-align: center;
-  margin: 25px auto;
+    text-align: center;
+    margin: 25px auto;
 }
 .list {
-  text-align: left;
-  max-width: 750px;
-  margin: auto;
+    text-align: left;
+    max-width: 750px;
+    margin: auto;
 }
 .submit-form {
-  max-width: 300px;
-  margin: auto;
+    max-width: 300px;
+    margin: auto;
 }
 .edit-form {
-  max-width: 300px;
-  margin: auto;
+    max-width: 300px;
+    margin: auto;
 }
 
 .nav-dropdown {
@@ -69,8 +72,8 @@
 /* PROFILE CSS */
 /* Profile_page */
 body{
-  background:#dcdcdc;
-  margin-top:20px;
+    background:#dcdcdc;
+    margin-top:20px;
 }
 .profile-cover {
     position: relative;
@@ -279,7 +282,7 @@ body{
 
 .panel-title .select2-selection .select2-selection__arrow:before {
     content: "\f107";
-    font-family: "Font Awesome\ 5 Free";
+    font-family: Titillium, serif;
     font-weight: 700;
 }
 
@@ -573,7 +576,7 @@ ul:last-child {
     content: "\f10d";
     color: #999;
     margin-right: 12px;
-    font-family: "FontAwesome";
+    font-family: Titillium, serif;
     font-size: 24px;
     font-weight: 900;
 }
@@ -652,10 +655,6 @@ ul:last-child {
 
 .weather--info .wi {
     margin-right: 10px;
-}
-
-.bg-naranja {
-  background-color: #ff8000;
 }
 
 .bg-blue {
@@ -752,7 +751,7 @@ li.list-group-item:first-child {
     content: "\f00c";
     color: #fff;
     background-color: #009378;
-    font-family: "FontAwesome";
+    font-family: Titillium, serif;
     font-size: 11px;
     line-height: 21px;
     font-weight: 700;
@@ -874,6 +873,7 @@ li.list-group-item:first-child {
     background-color: #d66800;
     padding-top: 3em;
     position: relative;
+    margin-top: auto;
     bottom: 0;
     width: 100%;
 }
@@ -892,4 +892,8 @@ li.list-group-item:first-child {
 
 .row .col-sm {
     margin-bottom: 1rem;
+}
+
+.panel-bio {
+    text-align: justify;
 }
