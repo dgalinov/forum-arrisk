@@ -2,7 +2,10 @@ import React from "react";
 
 const Login = (props) => {
     const {
+        username,
+        usernameError,
         email,
+        setUsername,
         setEmail,
         password,
         setPassword,
@@ -16,6 +19,9 @@ const Login = (props) => {
     return (
         <section className="login">
             <div className="loginController">
+                <label>User Name</label>
+                <input type="text" autoFocus required value={username} onChange={(e) => setUsername(e.target.value)} />
+                <p className="errorMsg">{usernameError}</p>
                 <label>Email</label>
                 <input type="text" autoFocus required value={email} onChange={(e) => setEmail(e.target.value)} />
                 <p className="errorMsg">{emailError}</p>

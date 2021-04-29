@@ -1,4 +1,3 @@
-import logo from './images/logo192.png';
 import './App.css';
 import React, { useState, useEffect } from 'react';
 import { Switch, Route, Link } from 'react-router-dom';
@@ -8,16 +7,22 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import AddForum from './components/add-forum.component';
 import ForumList from './components/forum-list.component';
 import Login from './components/login.component';
+import Profile from './components/profile.component';
 import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
 
 const App = () => {
   const [user, setUser] = useState('');
+  const [username, setUsername] = useState('');
+  const [usernameError, setUsernameError] = useState('');
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [hasAccount, setHasAccount] = useState(false);
-  console.log(user);
+  const today = new Date();
+  const date = today.getFullYear() + '-' + ( today.getMonth() + 1 ) + '-' + today.getDate();
+  const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  const dateTime = date + ' ' + time;
   const clearInputs = () => {
     setEmail('');
     setPassword('');
@@ -63,8 +68,22 @@ const App = () => {
           default:
             break;
       }
-      })
+      });
   };
+  const handleProfile = () => {
+    firebase.firestore().collection("users").add({
+        UID: user.uid,
+        username: username,
+        created_at: dateTime
+    })
+    .then((docRef) => {
+        // console.log("Document written with ID: ", docRef.id);
+    })
+    .catch((error) => {
+        setUsernameError(error);
+        // console.error("Error adding document: ", error);
+    });
+  }
   const handleLogout = () => {
     firebase.auth().signOut();
   };
@@ -72,8 +91,8 @@ const App = () => {
     firebase.auth().onAuthStateChanged(user => {
       if(user) {
         clearInputs();
-        console.log(user);
         setUser(user);
+        handleProfile();
       } else {
         setUser('');
       }
@@ -84,7 +103,7 @@ const App = () => {
   })
   return (
     <div className="App">
-      <Navbar bg="dark" variant="dark">
+      <Navbar bg="orange" variant="dark">
         <Navbar.Brand href="#home">Arrisk</Navbar.Brand>
         <Nav className="mr-auto nav_bar_wrapper">
         {user ?
@@ -102,7 +121,12 @@ const App = () => {
         </Nav>
         {user ?
           <Nav>
-            <NavDropdown title='{user}'>
+            <NavDropdown title={user.email}>
+              <NavDropdown.Item>
+                <Link to={"/profile"} className="nav-dropdown">
+                Profile
+                </Link>
+              </NavDropdown.Item>
               <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
             </NavDropdown>
           </Nav>
@@ -119,19 +143,23 @@ const App = () => {
           <Switch>
             <Route exact path={["/", "/forum"]} component={ForumList} />
             <Route exact path="/add" component={AddForum} />
+            <Route exact path="/profile" component={Profile} />
           </Switch>
         ) : (
-          <Login 
-          email={email} 
-          setEmail={setEmail} 
-          password={password}
-          setPassword={setPassword} 
-          handleLogin={handleLogin} 
-          handleSignup={handleSignup} 
-          hasAccount={hasAccount} 
-          setHasAccount={setHasAccount} 
-          emailError={emailError}
-          passwordError={passwordError}/>
+            <Login 
+            username = { username }
+            setUsername = { setUsername }
+            email = { email } 
+            setEmail = { setEmail } 
+            password = { password }
+            setPassword = { setPassword } 
+            handleLogin = { handleLogin } 
+            handleSignup = { handleSignup } 
+            hasAccount = { hasAccount } 
+            setHasAccount = { setHasAccount }
+            usernameError = { usernameError }
+            emailError = { emailError }
+            passwordError = { passwordError }/>
         )}
       </div>
     </div>
