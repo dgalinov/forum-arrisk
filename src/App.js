@@ -7,7 +7,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import AddForum from './components/add-forum.component';
 import ForumList from './components/forum-list.component';
 import Login from './components/login.component';
+import HomePage from './components/home.component';
 import Profile from './components/profile.component';
+import Footer from './components/footer.component';
 import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
 
 const App = () => {
@@ -70,20 +72,20 @@ const App = () => {
       }
       });
   };
-  const handleProfile = () => {
-    firebase.firestore().collection("users").add({
-        UID: user.uid,
-        username: username,
-        created_at: dateTime
-    })
-    .then((docRef) => {
-        // console.log("Document written with ID: ", docRef.id);
-    })
-    .catch((error) => {
-        setUsernameError(error);
-        // console.error("Error adding document: ", error);
-    });
-  }
+  // const handleProfile = () => {
+  //   firebase.firestore().collection("users").add({
+  //       UID: user.uid,
+  //       username: username,
+  //       created_at: dateTime
+  //   })
+  //   .then((docRef) => {
+  //       // console.log("Document written with ID: ", docRef.id);
+  //   })
+  //   .catch((error) => {
+  //       setUsernameError(error);
+  //       // console.error("Error adding document: ", error);
+  //   });
+  // }
   const handleLogout = () => {
     firebase.auth().signOut();
   };
@@ -92,7 +94,7 @@ const App = () => {
       if(user) {
         clearInputs();
         setUser(user);
-        handleProfile();
+        // handleProfile();
       } else {
         setUser('');
       }
@@ -100,11 +102,11 @@ const App = () => {
   };
   useEffect(() => {
     authListener();
-  })
+  });
   return (
     <div className="App">
       <Navbar bg="orange" variant="dark">
-        <Navbar.Brand href="#home">Arrisk</Navbar.Brand>
+        <Navbar.Brand href="/home">Arrisk</Navbar.Brand>
         <Nav className="mr-auto nav_bar_wrapper">
         {user ?
           <>
@@ -141,7 +143,8 @@ const App = () => {
       <div className="container mt-3">
         {user ? (
           <Switch>
-            <Route exact path={["/", "/forum"]} component={ForumList} />
+            <Route exact path={["/", "/home"]} component={HomePage} />
+            <Route exact path="/forum" component={ForumList} />
             <Route exact path="/add" component={AddForum} />
             <Route exact path="/profile" component={Profile} />
           </Switch>
@@ -162,6 +165,7 @@ const App = () => {
             passwordError = { passwordError }/>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

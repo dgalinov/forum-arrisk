@@ -43,11 +43,11 @@ class ImageUpload extends Component {
     }
     render() {
         const style = {
-        height: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center'
+            height: '100vh',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center'
         };
         return (
         <div style={style}>

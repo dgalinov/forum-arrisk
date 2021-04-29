@@ -1,15 +1,12 @@
-import React, { Component } from 'react';
-import firebase from '../firebase';
+import React from 'react';
 
-export default class Home extends Component {
-    logout() {
-        firebase.auth().signOut();
-    }
-    render() {
-        return (
-            <div>
-                <h3 className="h3">Welcome to the front page</h3>
-            </div>
-        )
-    }
+const HomePage = () => {
+    return (
+        <div>
+            <h3>OwO</h3>
+            <p>Yameteee</p>
+        </div>
+    );
 }
+
+export default HomePage;
