@@ -29,10 +29,10 @@ export default class ForumList extends Component {
             let key = item.key;
             let data = item.val();
             forums.push({
-            key: key,
-            title: data.title,
-            description: data.description,
-            published: data.published,
+                key: key,
+                title: data.title,
+                description: data.description,
+                published: data.published,
             });
         });
 
