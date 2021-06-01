@@ -5,18 +5,14 @@ import { Link } from 'react-router-dom';
 
 const ProfileUpdate = (props) => {
     const {
-        user,
         username,
-        setUsername,
         bio,
-        setBio,
         id
     } = props;
     const [newName, setNewName] = useState('');
     const [newBio, setNewBio] = useState('');
     const [image, setImage] = useState(null);
     const [url, setUrl] = useState('');
-    const [progress, setProgress] = useState(0);
     const handleChange = (event) => {
         if (event.target.files[0]) {
             const image = event.target.files[0];
@@ -32,8 +28,7 @@ const ProfileUpdate = (props) => {
         const uploadTask = firebase.storage().ref(`images/${image.name}`).put(image);
         uploadTask.on('state_changed', 
         (snapshot) => {
-            const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-            setProgress(progress);
+
         }, 
         (error) => {
             console.log(error);
@@ -41,7 +36,7 @@ const ProfileUpdate = (props) => {
         () => {
             
         });
-        firebase.storage().ref('images').child(image.name).getDownloadURL().then(url => {
+        firebase.storage().ref('post_images').child(image.name).getDownloadURL().then(url => {
             console.log(url);
             setUrl(url);
             firebase.firestore().collection("users").doc(id).update({

@@ -1,13 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaThumbsUp, FaUserEdit } from "react-icons/fa";
 import { Link } from 'react-router-dom';
+import firebase from '../firebase';
 
-const Profile = (props) => {
+const PreviewProfile = (props) => {
     const {
-        username,
+        user,
         bio,
         imageUrl
     } = props;
+    const [username, setUsername] = useState('');
+    const [url, setUrl] = useState('');
+    const [posts, setPosts] = useState([]);
+    const fetchPosts = async() => {
+        const response = firebase.firestore().collection('posts');
+        const data = await response.get();
+        const postData = [];
+        data.docs.forEach((doc)=>{
+            postData.push({...doc.data(), id: doc.id });
+            setPosts(postData);
+        });
+        
+    }
+    const fetchProfile = async() => {
+        const response = firebase.firestore().collection('posts');
+        const data = await response.get();
+        const postData = [];
+        data.docs.forEach((doc)=>{
+            postData.push({...doc.data(), id: doc.id });
+            setPosts(postData);
+        });
+        
+    }
+    useEffect(() => {
+        fetchProfile();
+        fetchPosts();
+    }, []);
     return (
         <div className="container">
             <div className="col-lg-8">
@@ -17,11 +45,7 @@ const Profile = (props) => {
                         <h3 className="h3">{username}</h3>
                     </div>
                     <div className="profile-cover__action bg--img" data-overlay="0.3">
-                        <button className="btn btn-rounded btn-warning">
-                            <Link to={"/profile_update"} className="nav-link">
-                            <span><FaUserEdit /> Edit</span>
-                            </Link>
-                        </button>
+                        
                         
                     </div>
                     <div className="profile-cover__info">
@@ -36,7 +60,7 @@ const Profile = (props) => {
                         <h3 className="panel-title">Bio</h3>
                     </div>
                     <div className="panel-content panel-activity panel-bio">
-                        {bio === "" ? (
+                        {bio == "" ? (
                             <>
                                 There is nothing written in here
                             </>
@@ -56,8 +80,8 @@ const Profile = (props) => {
                             <li>
                                 <i className="activity__list__icon fa fa-question-circle-o"></i>
                                 <div className="activity__list__header">
-                                    <img src="https://www.tailorbrands.com/wp-content/uploads/2020/07/twitter-logo.jpg" alt="profile_pic" />
-                                    <p>Profile Name Posted: Title of the Post</p>
+                                    <img src="#" alt="profile_pic" />
+                                    <a href="#">Profile Name</a> Posted: <a href="#">Title of the Post</a>
                                 </div>
                                 <div className="activity__list__footer">
                                     <p> <FaThumbsUp /> 0</p>
@@ -72,4 +96,4 @@ const Profile = (props) => {
     );
 };
 
-export default Profile;
+export default PreviewProfile;

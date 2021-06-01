@@ -1,16 +1,16 @@
 import './App.css';
 import React, { useState, useEffect } from 'react';
-import { Switch, Route, Link, Redirect } from 'react-router-dom';
+import { Switch, Route, Link, useHistory } from 'react-router-dom';
 import firebase from './firebase';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import AddForum from './components/add-forum.component';
-import ForumList from './components/forum-list.component';
 import Login from './components/login.component';
 import HomePage from './components/home.component';
 import Profile from './components/profile.component';
+import PreviewProfile from './components/preview-profile.component';
 import Footer from './components/footer.component';
 import Post from './components/forum-new.component';
+import PostList from './components/post-list.component';
 import UpdateProfile from './components/update-profile.component';
 import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
 
@@ -30,6 +30,7 @@ const App = () => {
   const date = today.getFullYear() + '-' + ( today.getMonth() + 1 ) + '-' + today.getDate();
   const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
   const dateTime = date + ' ' + time;
+  const history = useHistory();
   const clearInputs = () => {
     setEmail('');
     setPassword('');
@@ -57,6 +58,7 @@ const App = () => {
             break;
       }
       });
+      history.push("/home");
   };
   const handleSignup = () => {
       clearErrors();
@@ -77,6 +79,7 @@ const App = () => {
       }
       });
       handleProfile();
+      history.push("/home");
   };
   const handleProfile = () => {
     firebase.firestore().collection("users").add({
@@ -96,20 +99,23 @@ const App = () => {
     });
   }
   const setProfile = () => {
-    firebase.firestore().collection("users").where("UID", "==", user.email)
-    .get()
-    .then(snap => {
-        snap.forEach(doc => {
-            setUsername(doc.data().username);
-            setId(doc.id);
-            setBio(doc.data().BIO);
-            setImageUrl(doc.data().image_url);
-        });
-    });
+    if (user.email !== undefined || user.email != null) {
+      firebase.firestore().collection("users").where("UID", "==", user.email)
+      .get()
+      .then(snap => {
+          snap.forEach(doc => {
+              setUsername(doc.data().username);
+              setId(doc.id);
+              setBio(doc.data().BIO);
+              setImageUrl(doc.data().image_url);
+          });
+      });
+    }
   }
   const handleLogout = () => {
     firebase.auth().signOut();
     setUser('');
+    history.push("/home");
   };
   const authListener = () => {
     firebase.auth().onAuthStateChanged(user => {
@@ -132,14 +138,11 @@ const App = () => {
         <Nav className="mr-auto nav_bar_wrapper">
         {user ?
           <>
-          <Link to={"/forum"} className="nav-link">
-          forum
+          <Link to={"/post-list"} className="nav-link">
+          all posts
           </Link>
-          <Link to={"/add"} className="nav-link">
-          add
-          </Link>
-          <Link to={"/post"} className="nav-link">
-          create
+          <Link to={"/post-create"} className="nav-link">
+          create post
           </Link>
           </>
         :
@@ -168,36 +171,30 @@ const App = () => {
       <div className="container mt-3 container-sama">
         {user ? (
           <Switch>
-            <Route exact path={["/", "/home"]} component={HomePage} 
-              render={() => {
-                  return (
-                    this.state.isUserAuthenticated ?
-                    <Redirect to="/home" /> :
-                    <Redirect to="/" />
-                  )
-              }}
-            />
-            <Route exact path="/forum" component={ForumList} />
-            <Route exact path="/add" component={AddForum} />
+            <Route exact path={["/", "/home"]} render={(props) => (
+              <HomePage {...props} />
+            )} />
             <Route path="/profile_update" render={(props) => (
-              <UpdateProfile {...props} isAuthed={true} user = { user } username = { username } setUsername = { setUsername } bio = { bio } setBio = { setBio } id = { id } />
+              <UpdateProfile {...props} username = { username } bio = { bio } id = { id } />
             )} />
             <Route path="/profile" render={(props) => (
-              <Profile {...props} isAuthed={true} user = { user } username = { username } bio = { bio } imageUrl = { imageUrl } />
+              <Profile {...props} user = { user } username = { username } bio = { bio } imageUrl = { imageUrl } />
             )} />
-            <Route exact path="/post" component={Post} /> 
+            <Route exact path="/post-create" render={(props) => (
+              <Post {...props} user = { user } username = { username } />
+            )} />
+            <Route exact path="/post-list" render={(props) => (
+              <PostList {...props} user = { user } />
+            )} />
+            <Route exact path="/preview-profile" render={(props) => (
+              <PreviewProfile {...props} />
+            )} />
           </Switch>
         ) : (
           <Switch>
-            <Route exact path={["/", "/home"]} component={HomePage} 
-              render={() => {
-                  return (
-                    this.state.isUserAuthenticated ?
-                    <Redirect to="/home" /> :
-                    <Redirect to="/" />
-                  )
-              }}
-            />
+            <Route exact path={["/", "/home"]} render={(props) => (
+              <HomePage {...props} />
+            )} />
             <Route path="/login" render={() => (
               <Login 
               username = { username }
