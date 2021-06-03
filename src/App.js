@@ -9,9 +9,10 @@ import HomePage from './components/home.component';
 import Profile from './components/profile.component';
 import PreviewProfile from './components/preview-profile.component';
 import Footer from './components/footer.component';
-import Post from './components/forum-new.component';
+import AddPost from './components/add-post.component';
 import PostList from './components/post-list.component';
 import UpdateProfile from './components/update-profile.component';
+import Post from './components/post.component';
 import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
 
 const App = () => {
@@ -141,7 +142,7 @@ const App = () => {
           <Link to={"/post-list"} className="nav-link">
           all posts
           </Link>
-          <Link to={"/post-create"} className="nav-link">
+          <Link to={"/add-post"} className="nav-link">
           create post
           </Link>
           </>
@@ -180,14 +181,17 @@ const App = () => {
             <Route path="/profile" render={(props) => (
               <Profile {...props} user = { user } username = { username } bio = { bio } imageUrl = { imageUrl } />
             )} />
-            <Route exact path="/post-create" render={(props) => (
-              <Post {...props} user = { user } username = { username } />
+            <Route exact path="/add-post" render={(props) => (
+              <AddPost {...props} user = { user } username = { username } />
             )} />
             <Route exact path="/post-list" render={(props) => (
               <PostList {...props} user = { user } />
             )} />
             <Route exact path="/preview-profile" render={(props) => (
               <PreviewProfile {...props} />
+            )} />
+            <Route exact path="/post" render={(props) => (
+              <Post {...props} />
             )} />
           </Switch>
         ) : (

@@ -4,7 +4,7 @@ import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { Editor } from '@tinymce/tinymce-react';
 
-const Post = (props) => {
+const AddPost = (props) => {
     const {
         user,
         username
@@ -122,4 +122,4 @@ const Post = (props) => {
     );  
 }
 
-export default Post;
+export default AddPost;
