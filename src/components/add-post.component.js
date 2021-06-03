@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import firebase from '../firebase';
-import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { Editor } from '@tinymce/tinymce-react';
 
@@ -12,8 +11,8 @@ const AddPost = (props) => {
     console.log(user.email);
     const [title, setTitle] = useState('');
     const editorRef = useRef(null);
-    const [image, setImage] = useState('');
-    const [image_url, setImageUrl] = useState('');
+    const [images, setImages] = useState([]);
+    const [imageUrls, setImageUrls] = useState([]);
     const [category, setCategory] = useState('');
     const today = new Date();
     const date = today.getFullYear() + '-' + ( today.getMonth() + 1 ) + '-' + today.getDate();
@@ -31,47 +30,60 @@ const AddPost = (props) => {
         setCategory(category);
         console.log(category);
     }
-    const handleImageChange = (event) => {
-        if (event.target.files[0]) {
-            const image = event.target.files[0];
-            setImage(image);
-            console.log(image);
+    const onImageChange = (e) => {
+        for (let i = 0; i < e.target.files.length; i++) {
+            const newImage = e.target.files[i];
+            newImage["id"] = Math.random();
+            setImages((prevState) => [...prevState, newImage]);
         }
-    }
-    const handlePost = () => {
-        const uploadTask = firebase.storage().ref(`images/${image.name}`).put(image);
-        uploadTask.on('state_changed', 
-        (snapshot) => {
-            const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-        }, 
-        (error) => {
-            console.log(error);
-        }, 
-        () => {
-            
+    };
+    const onSubmit = (e) => {
+        const promises = [];
+        e.preventDefault();
+        if (!user || !imageUrls) {
+            return;
+        }
+        images.map((image) => {
+            const uploadTask = firebase.storage().ref(`images/${image.name}`).put(image);
+            promises.push(uploadTask);
+            uploadTask.on(
+                "state_changed",
+                (snapshot) => {},
+                (error) => {
+                    console.log(error);
+                },
+                async () => {
+                    await firebase.storage()
+                    .ref("images")
+                    .child(image.name)
+                    .getDownloadURL()
+                    .then((imageUrls) => {
+                        setImageUrls((prevState) => [...prevState, imageUrls]);
+                    });
+                }
+            );
         });
-        firebase.storage().ref('images').child(image.name).getDownloadURL().then(image_url => {
-            setImageUrl(image_url);
-            firebase.firestore().collection("posts").add({
-                UID: user.email,
-                username: username,
-                title: title,
-                description: editorRef.current.getContent(),
-                likes: 0,
-                category: category,
-                image_url: image_url,
-                // doc_url: doc_url,
-                created_at: dateTime,
-                updated_at: dateTime,
-            })
-            .then((docRef) => {
-                console.log("Document written with ID: ", docRef.id);
-            })
-            .catch((error) => {
-                console.error("Error adding document: ", error);
-            });
+        firebase.firestore().collection("posts").add({
+            UID: user.email,
+            username: username,
+            title: title,
+            description: editorRef.current.getContent(),
+            likes: 0,
+            category: category,
+            image_urls: imageUrls,
+            created_at: dateTime,
+            updated_at: dateTime,
+        })
+        .then((docRef) => {
+            console.log("Document written with ID: ", docRef.id);
+        })
+        .catch((error) => {
+            console.error("Error adding document: ", error);
         });
-    }
+        Promise.all(promises)
+        .then(() => alert("All images uploaded"))
+        .catch((err) => console.log(err));
+    };
     return (
         <div className="container">
             <div className="col-lg-8">
@@ -102,18 +114,31 @@ const AddPost = (props) => {
                             closeMenuOnSelect={false}
                             />
                         </div>
-                        <div class="row">
-                            <div class="col form-group">
+                        <div className="row">
+                            <div className="col form-group">
                                 <label>Add Image</label>
-                                <input type="file" className="form-control-file" id="post_image" onClick={handleImageChange} />
+                                <input type="file" multiple onChange={onImageChange} />
                             </div>
-                            {/* <div class="col form-group">
-                                <label>Add Doc</label>
-                                <input type="file" class="form-control-file" />
-                            </div> */}
+                            <br />
+                            {imageUrls.map((imageUrl, i) => (
+                                <div key={i}>
+                                <a href={imageUrl} target="_blank">
+                                    {imageUrl}
+                                </a>
+                                </div>
+                            ))}
+                            <br />
+                            {imageUrls.map((imageUrl, i) => (
+                                <img
+                                key={i}
+                                style={{ width: "500px" }}
+                                src={imageUrl || "http://via.placeholder.com/300"}
+                                alt="firebase-image"
+                                />
+                            ))}
                         </div>
                         <div className="btnContainer">
-                            <button className="btn btn-warning" onClick={handlePost}>Create</button>
+                            <button className="btn btn-warning" onClick={onSubmit}>Create</button>
                         </div>
                     </div>
                 </div>

@@ -15,6 +15,7 @@ const Login = (props) => {
         setHasAccount,
         emailError,
         passwordError,
+        handleGoogleSign
     } = props;
     return (
         <div className="container">
@@ -60,6 +61,7 @@ const Login = (props) => {
                                 <div className="btnContainer">
                                     <button className="btn btn-warning" onClick={handleLogin}>Sign in</button>
                                     <p>Don't have an account ? <span className="btn btn-outline-warning" onClick={() => setHasAccount(!hasAccount)}>Sign up</span></p>
+                                    <p><span className="btn btn-outline-danger" onClick={handleGoogleSign}>Sign in with Google</span></p>
                                 </div>
                             </>
                         )}

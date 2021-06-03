@@ -1,6 +1,6 @@
 import './App.css';
 import React, { useState, useEffect } from 'react';
-import { Switch, Route, Link, useHistory } from 'react-router-dom';
+import { Switch, Route, Link, useHistory, Redirect } from 'react-router-dom';
 import firebase from './firebase';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -40,11 +40,40 @@ const App = () => {
     setEmailError('');
     setPasswordError('');
   }
+  const providers = {
+    googleProvider: new firebase.auth.GoogleAuthProvider(),
+  }
+  const handleGoogleSign = () => {
+    firebase.auth()
+    .signInWithPopup(providers.googleProvider)
+    .then((result) => {
+      /** @type {firebase.auth.OAuthCredential} */
+      var credential = result.credential;
+      console.log(credential);
+      // This gives you a Google Access Token. You can use it to access the Google API.
+      var token = credential.accessToken;
+      // The signed-in user info.
+      var user = result.user;
+      // ...
+    }).catch((error) => {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      // The email of the user's account used.
+      var email = error.email;
+      // The firebase.auth.AuthCredential type that was used.
+      var credential = error.credential;
+      // ...
+    });
+  }
   const handleLogin = () => {
       clearErrors();
       firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
+      .then(() => {
+        history.push('/home');
+      })
       .catch(err => {
       switch(err.code) {
           case 'auth/invalid-email':
@@ -59,13 +88,15 @@ const App = () => {
             break;
       }
       });
-      history.push("/home");
   };
   const handleSignup = () => {
       clearErrors();
       firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
+      .then(() => {
+        history.push('/home');
+      })
       .catch(err => {
       switch(err.code) {
           case 'auth/email-already-in-use':
@@ -80,7 +111,6 @@ const App = () => {
       }
       });
       handleProfile();
-      history.push("/home");
   };
   const handleProfile = () => {
     firebase.firestore().collection("users").add({
@@ -173,7 +203,9 @@ const App = () => {
         {user ? (
           <Switch>
             <Route exact path={["/", "/home"]} render={(props) => (
+              user ?
               <HomePage {...props} />
+              : <Redirect to='/login' />
             )} />
             <Route path="/profile_update" render={(props) => (
               <UpdateProfile {...props} username = { username } bio = { bio } id = { id } />
@@ -213,7 +245,8 @@ const App = () => {
               setHasAccount = { setHasAccount }
               usernameError = { usernameError }
               emailError = { emailError }
-              passwordError = { passwordError }/>
+              passwordError = { passwordError }
+              handleGoogleSign = { handleGoogleSign } />
             )} />
           </Switch>
         )}

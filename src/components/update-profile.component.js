@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import firebase from '../firebase';
 import { FaSave, FaRegTimesCircle } from "react-icons/fa";
 import { Link } from 'react-router-dom';
@@ -27,30 +27,27 @@ const ProfileUpdate = (props) => {
     const handleUpload = () => {
         const uploadTask = firebase.storage().ref(`images/${image.name}`).put(image);
         uploadTask.on('state_changed', 
-        (snapshot) => {
-
-        }, 
+        (snapshot) => {}, 
         (error) => {
             console.log(error);
         }, 
         () => {
-            
-        });
-        firebase.storage().ref('post_images').child(image.name).getDownloadURL().then(url => {
-            console.log(url);
-            setUrl(url);
-            firebase.firestore().collection("users").doc(id).update({
-                username: newName,
-                updated_at: dateTime,
-                BIO: newBio,
-                image_url: url
-            }).then(() => {
-                console.log("Document successfully updated!");
-            }).catch((error) => {
-                console.error("Error updating document: ", error);
+            firebase.storage().ref('images').child(image.name).getDownloadURL().then(url => {
+                console.log(url);
+                setUrl(url);
+                firebase.firestore().collection("users").doc(id).update({
+                    username: newName,
+                    updated_at: dateTime,
+                    BIO: newBio,
+                    image_url: url
+                }).then(() => {
+                    console.log("Document successfully updated!");
+                    window.location.reload();
+                }).catch((error) => {
+                    console.error("Error updating document: ", error);
+                });
             });
         });
-        
     }
     return (
         <div className="container">

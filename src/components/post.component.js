@@ -1,21 +1,22 @@
 import React from 'react';
 
 const PostList = (props) => {
-    console.log('About', props.location.aboutProps);
+    console.log('About', props.location.state.id);
     return (
         <div className="container">
             <div className="col-lg-8">
                 <div className="panel panel-post">
-                    <h3>TITLE</h3>
-                    <p>DESCRIPTION</p>
-                    <img height="120px" src={ "https://natureconservancy-h.assetsadobe.com/is/image/content/dam/tnc/nature/en/photos/Zugpsitze_mountain.jpg?crop=0,176,3008,1654&wid=4000&hei=2200&scl=0.752" || null } alt="X-X" />
-                    <img height="120px" src={ "https://natureconservancy-h.assetsadobe.com/is/image/content/dam/tnc/nature/en/photos/Zugpsitze_mountain.jpg?crop=0,176,3008,1654&wid=4000&hei=2200&scl=0.752" || null } alt="X-X" />
-                    <img height="120px" src={ "https://natureconservancy-h.assetsadobe.com/is/image/content/dam/tnc/nature/en/photos/Zugpsitze_mountain.jpg?crop=0,176,3008,1654&wid=4000&hei=2200&scl=0.752" || null } alt="X-X" />
-                    <img height="120px" src={ "https://natureconservancy-h.assetsadobe.com/is/image/content/dam/tnc/nature/en/photos/Zugpsitze_mountain.jpg?crop=0,176,3008,1654&wid=4000&hei=2200&scl=0.752" || null } alt="X-X" />
-                    <img height="120px" src={ "https://natureconservancy-h.assetsadobe.com/is/image/content/dam/tnc/nature/en/photos/Zugpsitze_mountain.jpg?crop=0,176,3008,1654&wid=4000&hei=2200&scl=0.752" || null } alt="X-X" />
-                    <img height="120px" src={ "https://natureconservancy-h.assetsadobe.com/is/image/content/dam/tnc/nature/en/photos/Zugpsitze_mountain.jpg?crop=0,176,3008,1654&wid=4000&hei=2200&scl=0.752" || null } alt="X-X" />
-                    <img height="120px" src={ "https://natureconservancy-h.assetsadobe.com/is/image/content/dam/tnc/nature/en/photos/Zugpsitze_mountain.jpg?crop=0,176,3008,1654&wid=4000&hei=2200&scl=0.752" || null } alt="X-X" />
-                    <p>CATEGORIAS</p>
+                    <h3>{props.location.state.id.title}</h3>
+                    <p dangerouslySetInnerHTML={{ __html: props.location.state.id.description }}></p>
+                    {/* {props.location.state.id.image_url.map((imageUrl, i) => (
+                                <img
+                                key={i}
+                                style={{ width: "500px" }}
+                                src={imageUrl || "http://via.placeholder.com/300"}
+                                alt="firebase-image"
+                                />
+                            ))} */}
+                    <p></p>
                 </div>
                 <div className="panel panel-post">
                     <textarea></textarea>
