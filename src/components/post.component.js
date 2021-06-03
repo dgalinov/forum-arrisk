@@ -6,7 +6,7 @@ const PostList = (props) => {
         <div className="container">
             <div className="col-lg-8">
                 <div className="panel panel-post">
-                    <h3>{props.location.state.id.title}</h3>
+                    <h3 className="h3-post" >{props.location.state.id.title}</h3>
                     <p dangerouslySetInnerHTML={{ __html: props.location.state.id.description }}></p>
                     {/* {props.location.state.id.image_url.map((imageUrl, i) => (
                                 <img

@@ -48,22 +48,19 @@ const App = () => {
     .signInWithPopup(providers.googleProvider)
     .then((result) => {
       /** @type {firebase.auth.OAuthCredential} */
-      var credential = result.credential;
-      console.log(credential);
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      var token = credential.accessToken;
-      // The signed-in user info.
-      var user = result.user;
-      // ...
+      // var credential = result.credential;
+      // var token = credential.accessToken;
+      // var user = result.user;
+      setUser(result.user);
+      setUsername(result.user.displayName);
+      setEmail(result.user.email);
+      console.log(user);
+      history.push('/home');
     }).catch((error) => {
-      // Handle Errors here.
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      // The email of the user's account used.
-      var email = error.email;
-      // The firebase.auth.AuthCredential type that was used.
-      var credential = error.credential;
-      // ...
+      // var errorCode = error.code;
+      // var errorMessage = error.message;
+      // var email = error.email;
+      // var credential = error.credential;
     });
   }
   const handleLogin = () => {
@@ -193,9 +190,11 @@ const App = () => {
           </Nav>
           : 
           <>
+          <Nav>
             <Link to={"/login"} className="nav-link" >
               Sign In
             </Link>
+          </Nav>
           </>
         }
       </Navbar>
