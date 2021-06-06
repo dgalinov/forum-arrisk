@@ -1045,3 +1045,7 @@ li.list-group-item:first-child {
 .hit-voting {
     cursor: pointer
 }
+
+.post-categories {
+    display: flex
+}

@@ -3,10 +3,13 @@ import firebase from '../firebase';
 import { FaArrowRight } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 
-const DisplayComment = () => {
+const DisplayComment = (props) => {
+    const {
+        id_post
+    } = props;
     const [comments, setComments] = useState([]);
     const componentDidMount = () =>{
-        firebase.firestore().collection('comments').get().then( snapshot => {
+        firebase.firestore().collection('comments').where("id_post", "==", id_post).get().then( snapshot => {
             const dataSnapshot = [];
             snapshot.forEach( doc => {
                 dataSnapshot.push({...doc.data(), id_comment: doc.id });

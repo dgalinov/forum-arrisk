@@ -15,7 +15,7 @@ const Comment = (props) => {
     const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     const dateTime = date + ' ' + time;
     const onSubmit = () => {
-        firebase.firestore().collection("comments").where("id_post", "==", id_post).add({
+        firebase.firestore().collection("comments").add({
             UID: user.email,
             username: username,
             id_post: id_post,
@@ -39,7 +39,7 @@ const Comment = (props) => {
                     <input type="text" className="form-control mr-3" placeholder="Add comment" autoFocus required value={content} onChange={(e) => setContent(e.target.value)} />
                     <button className="btn btn-warning" type="button" onClick={onSubmit}>Comment</button>
                 </div>
-                <DisplayComment />
+                <DisplayComment id_post = { id_post } />
             </div>
             {/* <textarea className="form-control textarea-comment" value={content} onChange={(e) => setContent(e.target.value)}></textarea>
             <button className="btn btn-warning" onClick={onSubmit}>send</button> */}

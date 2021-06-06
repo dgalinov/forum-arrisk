@@ -8,7 +8,6 @@ const PostList = (props) => {
         imageUrl
     } = props;
     const id_post = props.location.state.post.id_post;
-    console.log('About', props.location.state);
     return (
         <div className="container">
             <div className="col-lg-8">
@@ -23,7 +22,12 @@ const PostList = (props) => {
                         alt="firebase-image"
                         />
                     ))}
-                    <p></p>
+                    <div className="post-categories">
+                        Categories:
+                        {props.location.state.post.category.map((cat, i) => (
+                            <p key={i}>{cat.value}</p>
+                        ))}
+                    </div>
                 </div>
                 <Comment user = { user } id_post = { id_post } username = { username } imageUrl = { imageUrl } />
             </div>

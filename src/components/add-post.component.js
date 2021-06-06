@@ -13,7 +13,7 @@ const AddPost = (props) => {
     const editorRef = useRef(null);
     const [images, setImages] = useState([]);
     const [imageUrls, setImageUrls] = useState([]);
-    const [count, setCount] = useState(0);
+    let counter = 1;
     const [category, setCategory] = useState('');
     const today = new Date();
     const date = today.getFullYear() + '-' + ( today.getMonth() + 1 ) + '-' + today.getDate();
@@ -47,6 +47,7 @@ const AddPost = (props) => {
         if (!user || !imageUrls) {
             return;
         }
+        
         images.map((image) => {
             const uploadTask = firebase.storage().ref(`images/${image.name}`).put(image);
             promises.push(uploadTask);
@@ -63,34 +64,34 @@ const AddPost = (props) => {
                     .getDownloadURL()
                     .then((url) => {
                         setImageUrls(prevState => [...prevState, url]);
-                        if (count === images.length) {
-                            console.log("OwO");
+                        if (counter == images.length) {
+                            console.log("Entra",imageUrls);
+                            firebase.firestore().collection("posts").add({
+                                UID: user.email,
+                                username: username,
+                                title: title,
+                                description: editorRef.current.getContent(),
+                                likes: 0,
+                                category: category,
+                                image_urls: imageUrls,
+                                created_at: dateTime,
+                                updated_at: dateTime,
+                            })
+                            .then((docRef) => {
+                                console.log(imageUrls);
+                                console.log("Document written with ID: ", docRef.id);
+                                // history.push('/post-list');
+                            })
+                            .catch((error) => {
+                                console.error("Error adding document: ", error);
+                            });
                         } else {
-                            console.log(count);
-                            setCount((prevState) => ({count: prevState.count + 1}));
+                            counter += 1;
+                            console.log("EEEEEH BAKAYAROO!", counter, images.length);
                         }
-                        
                     });
                 }
             );
-        });
-        firebase.firestore().collection("posts").add({
-            UID: user.email,
-            username: username,
-            title: title,
-            description: editorRef.current.getContent(),
-            likes: 0,
-            category: category,
-            image_urls: imageUrls,
-            created_at: dateTime,
-            updated_at: dateTime,
-        })
-        .then((docRef) => {
-            console.log("Document written with ID: ", docRef.id);
-            // history.push('/post-list');
-        })
-        .catch((error) => {
-            console.error("Error adding document: ", error);
         });
         Promise.all(promises)
         .then(() => {

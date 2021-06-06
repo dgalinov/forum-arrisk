@@ -8,11 +8,12 @@ const PostList = () => {
     const [searchTerm, setSearchTerm] = useState([]);
     const [orderBy, setOrderBy] = useState('created_at');
     const [order, setOrder] = useState('desc');
-    const componentDidMount = () =>{
+    const displayPostList = () =>{
         firebase.firestore().collection('posts').orderBy(orderBy, order).get().then( snapshot => {
             const dataSnapshot = [];
             snapshot.forEach( doc => {
                 dataSnapshot.push({...doc.data(), id_post: doc.id });
+                console.log("Entra");
             })
             setPosts(dataSnapshot);
         }).catch( error => console.log(error));
@@ -22,27 +23,27 @@ const PostList = () => {
         setOrder('desc');
     }
     useEffect(() => {
-        componentDidMount();
-    }, []);
-    const num = 1;
+        displayPostList();
+        cleanFilter();
+    }, [orderBy, order]);
     return (
         <div className="main-container">
             <div className="card-container">
                 <div className="panel-search">
-                    <div class="post-search-filter">
+                    <div className="post-search-filter">
                         <input type="text" className="form-control" placeholder="Search..." onChange={event => {setSearchTerm(event.target.value)}} />
                     </div>
                     <div className="post-order-radio" >
-                        <label for="y-option" className="l-radio">
-                            <input type="radio" id="y-option" name="orderbyRadio" tabindex="1" defaultChecked onClick={cleanFilter} />
+                        <label className="l-radio">
+                            <input type="radio" id="y-option" name="orderbyRadio" defaultChecked onClick={() => {cleanFilter()}} />
                             <span>None</span>
                         </label>
-                        <label for="f-option" className="l-radio">
-                            <input type="radio" id="f-option" name="orderbyRadio" tabindex="2" onClick={() => {setOrderBy('title'); console.log('entra', orderBy)}} />
+                        <label className="l-radio">
+                            <input type="radio" id="f-option" name="orderbyRadio" onClick={() => {setOrderBy('title');}} />
                             <span>Title</span>
                         </label>
-                        <label for="r-option" className="l-radio">
-                            <input type="radio" id="r-option" name="orderbyRadio" tabindex="3" />
+                        <label className="l-radio">
+                            <input type="radio" id="r-option" name="orderbyRadio" onClick={() => {setOrderBy('date');}} />
                             <span>Date</span>
                         </label>
                     </div>
