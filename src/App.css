@@ -968,10 +968,6 @@ li.list-group-item:first-child {
     border-bottom: 1px solid white;
 }
 
-.post-order-radio {
-    /* width: 100%; */
-}
-
 .post-search-filter {
     width: 20rem;
 }
@@ -1018,4 +1014,34 @@ li.list-group-item:first-child {
 	display: inline-block;
 	line-height: 20px;
 	padding: 0 8px;
+}
+
+.textarea-comment {
+    resize: none;
+    overflow: overlay;
+    height: 9rem !important;
+}
+
+.bdge {
+    height: 21px;
+    background-color: orange;
+    color: #fff;
+    font-size: 11px;
+    padding: 8px;
+    border-radius: 4px;
+    line-height: 3px
+}
+
+.comments {
+    text-decoration: underline;
+    text-underline-position: under;
+    cursor: pointer
+}
+
+.hit-voting:hover {
+    color: blue
+}
+
+.hit-voting {
+    cursor: pointer
 }

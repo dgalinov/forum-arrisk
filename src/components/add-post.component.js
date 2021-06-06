@@ -2,22 +2,24 @@ import React, { useState, useRef } from 'react';
 import firebase from '../firebase';
 import CreatableSelect from 'react-select/creatable';
 import { Editor } from '@tinymce/tinymce-react';
+import { useHistory } from 'react-router-dom';
 
 const AddPost = (props) => {
     const {
         user,
         username
     } = props;
-    console.log(user.email);
     const [title, setTitle] = useState('');
     const editorRef = useRef(null);
     const [images, setImages] = useState([]);
     const [imageUrls, setImageUrls] = useState([]);
+    const [count, setCount] = useState(0);
     const [category, setCategory] = useState('');
     const today = new Date();
     const date = today.getFullYear() + '-' + ( today.getMonth() + 1 ) + '-' + today.getDate();
     const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     const dateTime = date + ' ' + time;
+    const history = useHistory();
     const options = [
         { value: "juegos", label: "juegos" },
         { value: "coches", label: "coches" },
@@ -35,7 +37,9 @@ const AddPost = (props) => {
             const newImage = e.target.files[i];
             newImage["id"] = Math.random();
             setImages((prevState) => [...prevState, newImage]);
+            
         }
+        console.log(images.length);
     };
     const onSubmit = (e) => {
         const promises = [];
@@ -57,8 +61,15 @@ const AddPost = (props) => {
                     .ref("images")
                     .child(image.name)
                     .getDownloadURL()
-                    .then((imageUrls) => {
-                        setImageUrls((prevState) => [...prevState, imageUrls]);
+                    .then((url) => {
+                        setImageUrls(prevState => [...prevState, url]);
+                        if (count === images.length) {
+                            console.log("OwO");
+                        } else {
+                            console.log(count);
+                            setCount((prevState) => ({count: prevState.count + 1}));
+                        }
+                        
                     });
                 }
             );
@@ -76,12 +87,14 @@ const AddPost = (props) => {
         })
         .then((docRef) => {
             console.log("Document written with ID: ", docRef.id);
+            // history.push('/post-list');
         })
         .catch((error) => {
             console.error("Error adding document: ", error);
         });
         Promise.all(promises)
-        .then(() => alert("All images uploaded"))
+        .then(() => {
+        })
         .catch((err) => console.log(err));
     };
     return (

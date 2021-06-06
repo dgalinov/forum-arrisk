@@ -222,7 +222,7 @@ const App = () => {
               <PreviewProfile {...props} />
             )} />
             <Route exact path="/post" render={(props) => (
-              <Post {...props} />
+              <Post {...props} user = { user } username = { username } imageUrl = { imageUrl } />
             )} />
           </Switch>
         ) : (

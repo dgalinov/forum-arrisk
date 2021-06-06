@@ -10,11 +10,9 @@ const PostList = () => {
     const [order, setOrder] = useState('desc');
     const componentDidMount = () =>{
         firebase.firestore().collection('posts').orderBy(orderBy, order).get().then( snapshot => {
-            console.log(snapshot);
             const dataSnapshot = [];
             snapshot.forEach( doc => {
-                const data = doc.data();
-                dataSnapshot.push(data);
+                dataSnapshot.push({...doc.data(), id_post: doc.id });
             })
             setPosts(dataSnapshot);
         }).catch( error => console.log(error));
@@ -35,15 +33,15 @@ const PostList = () => {
                         <input type="text" className="form-control" placeholder="Search..." onChange={event => {setSearchTerm(event.target.value)}} />
                     </div>
                     <div className="post-order-radio" >
-                        <label for="y-option" class="l-radio">
+                        <label for="y-option" className="l-radio">
                             <input type="radio" id="y-option" name="orderbyRadio" tabindex="1" defaultChecked onClick={cleanFilter} />
                             <span>None</span>
                         </label>
-                        <label for="f-option" class="l-radio">
+                        <label for="f-option" className="l-radio">
                             <input type="radio" id="f-option" name="orderbyRadio" tabindex="2" onClick={() => {setOrderBy('title'); console.log('entra', orderBy)}} />
                             <span>Title</span>
                         </label>
-                        <label for="r-option" class="l-radio">
+                        <label for="r-option" className="l-radio">
                             <input type="radio" id="r-option" name="orderbyRadio" tabindex="3" />
                             <span>Date</span>
                         </label>
@@ -60,7 +58,7 @@ const PostList = () => {
                         return(
                             <div className="card_post card-2" key={eachPost.id}>
                                 <h2 className="card__title">{eachPost.title}</h2>
-                                <p className="card__apply"><Link to={{ pathname: `/post`, state:{id: eachPost } }} >Open Post <FaArrowRight /></Link></p>
+                                <p className="card__apply"><Link to={{ pathname: `/post`, state:{post: eachPost } }} >Open Post <FaArrowRight /></Link></p>
                             </div>
                         )
                     })
