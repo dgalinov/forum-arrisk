@@ -1024,7 +1024,7 @@ li.list-group-item:first-child {
 
 .bdge {
     height: 21px;
-    background-color: orange;
+    background-color: #ff9400;
     color: #fff;
     font-size: 11px;
     padding: 8px;
@@ -1048,4 +1048,27 @@ li.list-group-item:first-child {
 
 .post-categories {
     display: flex
+}
+
+.like-button {
+    background: none;
+    border: none;
+}
+
+.liked-icon-button {
+    color: #ff9400;
+}
+
+.unliked-icon-button {
+    color: black;
+}
+
+.display-error {
+    color: #ff9400;
+    border: 1px solid #ff9400;
+    border-radius: .25rem;
+}
+
+.errorMsg {
+    color: #ff9400;
 }

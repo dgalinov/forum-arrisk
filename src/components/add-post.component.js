@@ -13,7 +13,7 @@ const AddPost = (props) => {
     const editorRef = useRef(null);
     const [images, setImages] = useState([]);
     const [imageUrls, setImageUrls] = useState([]);
-    let counter = 1;
+    const [displayError, setDisplayError] = useState('');
     const [category, setCategory] = useState('');
     const today = new Date();
     const date = today.getFullYear() + '-' + ( today.getMonth() + 1 ) + '-' + today.getDate();
@@ -41,13 +41,8 @@ const AddPost = (props) => {
         }
         console.log(images.length);
     };
-    const onSubmit = (e) => {
+    const uploadImages = () => {
         const promises = [];
-        e.preventDefault();
-        if (!user || !imageUrls) {
-            return;
-        }
-        
         images.map((image) => {
             const uploadTask = firebase.storage().ref(`images/${image.name}`).put(image);
             promises.push(uploadTask);
@@ -64,31 +59,6 @@ const AddPost = (props) => {
                     .getDownloadURL()
                     .then((url) => {
                         setImageUrls(prevState => [...prevState, url]);
-                        if (counter == images.length) {
-                            console.log("Entra",imageUrls);
-                            firebase.firestore().collection("posts").add({
-                                UID: user.email,
-                                username: username,
-                                title: title,
-                                description: editorRef.current.getContent(),
-                                likes: 0,
-                                category: category,
-                                image_urls: imageUrls,
-                                created_at: dateTime,
-                                updated_at: dateTime,
-                            })
-                            .then((docRef) => {
-                                console.log(imageUrls);
-                                console.log("Document written with ID: ", docRef.id);
-                                // history.push('/post-list');
-                            })
-                            .catch((error) => {
-                                console.error("Error adding document: ", error);
-                            });
-                        } else {
-                            counter += 1;
-                            console.log("EEEEEH BAKAYAROO!", counter, images.length);
-                        }
                     });
                 }
             );
@@ -97,6 +67,45 @@ const AddPost = (props) => {
         .then(() => {
         })
         .catch((err) => console.log(err));
+    }
+    const onSubmit = () => {
+        if (title !== null && title !== '') {
+            if (editorRef.current.getContent() !== null && editorRef.current.getContent() !== '') {
+                if (category !== null && category !== '') {
+                    const newCategory = category.map(({
+                        __isNew__: isNew,
+                        ...rest
+                    }) => ({
+                        isNew,
+                        ...rest
+                    }));
+                    firebase.firestore().collection("posts").add({
+                        UID: user.email,
+                        username: username,
+                        title: title,
+                        description: editorRef.current.getContent(),
+                        likes: 0,
+                        // category: newCategory,
+                        image_urls: imageUrls,
+                        created_at: dateTime,
+                        updated_at: dateTime,
+                    })
+                    .then((docRef) => {
+                        console.log("Document written with ID: ", docRef.id);
+                        // history.push('/post-list');
+                    })
+                    .catch((error) => {
+                        console.error("Error adding document: ", error);
+                    });
+                } else {
+                    setDisplayError('No category assigned');
+                }
+            } else {
+                setDisplayError('Description is empty');
+            }
+        } else {
+            setDisplayError('Title is empty');
+        }
     };
     return (
         <div className="container">
@@ -104,6 +113,7 @@ const AddPost = (props) => {
                 <div className="panel">
                     <div className="panel-content panel-bio">
                         <h1 className="h1">New Post</h1>
+                        <p className="display-error">{displayError}</p>
                         <div className="mb-3">
                             <label className="form-label">Title</label>
                             <input type="text" id="title" className="form-control" placeholder="Title" autoFocus required value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -151,6 +161,7 @@ const AddPost = (props) => {
                                 />
                             ))}
                         </div>
+                        <button className="btn btn-outline-warning" onClick={uploadImages}>upload images</button>
                         <div className="btnContainer">
                             <button className="btn btn-warning" onClick={onSubmit}>Create</button>
                         </div>

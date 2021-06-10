@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import firebase from '../firebase';
+import CommentForm from './comment-form.component';
 import { FaArrowRight } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 
@@ -8,6 +9,7 @@ const DisplayComment = (props) => {
         id_post
     } = props;
     const [comments, setComments] = useState([]);
+    const [showReplyBox, setShowReplyBox] = useState(false);
     const componentDidMount = () =>{
         firebase.firestore().collection('comments').where("id_post", "==", id_post).get().then( snapshot => {
             const dataSnapshot = [];
@@ -34,7 +36,14 @@ const DisplayComment = (props) => {
                             <div className="comment-text-sm"><span>{comment.content}</span></div>
                             <div className="reply-section">
                                 <div className="d-flex flex-row align-items-center voting-icons">
-                                    <h6 className="ml-2 mt-1">Reply</h6>
+                                    {showReplyBox ? (
+                                        <div>
+                                            <button className="btn btn-danger" onClick={() => setShowReplyBox(false)} >Cancel Reply</button>
+                                            <CommentForm parentId={comment.id_comment} />
+                                        </div>
+                                    ) : (
+                                        <button className="btn btn-warning" onClick={setShowReplyBox(true)}>Reply</button>
+                                    )}
                                 </div>
                             </div>
                         </div>

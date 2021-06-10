@@ -1,25 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import firebase from '../firebase';
 import { FaSave, FaRegTimesCircle } from "react-icons/fa";
 import { Link } from 'react-router-dom';
-import { useHistory } from 'react-router-dom';
 
-const ProfileUpdate = (props) => {
+const PostUpdate = (props) => {
     const {
         username,
         bio,
         id
     } = props;
-    const [newName, setNewName] = useState('');
-    const [newBio, setNewBio] = useState('');
-    const [image, setImage] = useState(null);
-    const [url, setUrl] = useState('');
-    const [displayError, setDisplayError] = useState('');
-    const history = useHistory();
+    const [newTitle, setNewTitle] = useState('');
+    const [newContent, setNewContent] = useState('');
+    // const [image, setImage] = useState(null);
+    // const [url, setUrl] = useState('');
     const handleChange = (event) => {
         if (event.target.files[0]) {
             const image = event.target.files[0];
             setImage(image);
+            console.log(image.name);
         }
     }
     const today = new Date();
@@ -27,48 +25,29 @@ const ProfileUpdate = (props) => {
     const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     const dateTime = date + ' ' + time;
     const handleUpload = () => {
-        if (image !== null) {
-            const uploadTask = firebase.storage().ref(`images/${image.name}`).put(image);
-            uploadTask.on('state_changed', 
-            (snapshot) => {}, 
-            (error) => {
-                console.log(error);
-            }, 
-            () => {
-                console.log(image);
-                firebase.storage().ref('images').child(image.name).getDownloadURL().then(url => {
-                    console.log(url);
-                    setUrl(url);
-                    if (newName.length > 4) {
-                        if (newName !== null && newName !== '') {
-                            if (newBio !== null && newBio !== '') {
-                                firebase.firestore().collection("users").doc(id).update({
-                                    username: newName,
-                                    updated_at: dateTime,
-                                    BIO: newBio,
-                                    image_url: url
-                                }).then(() => {
-                                    console.log("Document successfully updated!");
-                                    history.push('/profile');
-                                    window.location.reload();
-                                }).catch((error) => {
-                                    console.error("Error updating document: ", error);
-                                });
-                            } else {
-                                setDisplayError("Biography can't be empty");
-                            }
-                        } else {
-                            setDisplayError("Username can't be empty");
-                        }
-                    } else {
-                        setDisplayError("Username must be 4 character long or more");
-                    }
+        const uploadTask = firebase.storage().ref(`images/${image.name}`).put(image);
+        uploadTask.on('state_changed', 
+        (snapshot) => {}, 
+        (error) => {
+            console.log(error);
+        }, 
+        () => {
+            firebase.storage().ref('images').child(image.name).getDownloadURL().then(url => {
+                console.log(url);
+                setUrl(url);
+                firebase.firestore().collection("users").doc(id).update({
+                    username: newName,
+                    updated_at: dateTime,
+                    BIO: newBio,
+                    image_url: url
+                }).then(() => {
+                    console.log("Document successfully updated!");
+                    window.location.reload();
+                }).catch((error) => {
+                    console.error("Error updating document: ", error);
                 });
             });
-        } else {
-            setDisplayError("The image is invalid or the upload failed, try upload the file again");
-            console.log(displayError);
-        }
+        });
     }
     return (
         <div className="container">
@@ -86,7 +65,9 @@ const ProfileUpdate = (props) => {
                             </Link>
                         </button>
                         <button className="btn btn-rounded btn-warning" onClick={handleUpload}>
+                            <Link to={"/profile"} className="nav-link">
                             <span><FaSave /> Save</span>
+                            </Link>
                         </button>
                     </div>
                     <div className="profile-cover__info">
@@ -96,7 +77,6 @@ const ProfileUpdate = (props) => {
                         </ul>
                     </div>
                 </div>
-                <label className="display-error">{displayError}</label>
                 <div className="panel">
                     <div className="panel-heading">
                         <h3 className="panel-title">Bio</h3>
@@ -110,4 +90,4 @@ const ProfileUpdate = (props) => {
     );
 };
 
-export default ProfileUpdate;
+export default PostUpdate;

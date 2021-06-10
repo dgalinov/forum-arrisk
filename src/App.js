@@ -207,7 +207,7 @@ const App = () => {
               : <Redirect to='/login' />
             )} />
             <Route path="/profile_update" render={(props) => (
-              <UpdateProfile {...props} username = { username } bio = { bio } id = { id } />
+              <UpdateProfile {...props} username = { username } bio = { bio } id = { id } imageUrl = { imageUrl } />
             )} />
             <Route path="/profile" render={(props) => (
               <Profile {...props} user = { user } username = { username } bio = { bio } imageUrl = { imageUrl } />
