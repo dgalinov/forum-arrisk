@@ -1,13 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaThumbsUp, FaUserEdit } from "react-icons/fa";
 import { Link } from 'react-router-dom';
+import firebase from '../firebase';
 
 const Profile = (props) => {
     const {
         username,
+        user,
         bio,
         imageUrl
     } = props;
+    const [url, setUrl] = useState('');
+    const [posts, setPosts] = useState([]);
+    const getProfilePosts = async() => {
+        const response = firebase.firestore().collection('posts');
+        const data = await response.where('UID', '==', user.email).get();
+        const postData = [];
+        data.docs.forEach((doc)=>{
+            postData.push({...doc.data(), id: doc.id });
+            setPosts(postData);
+        });
+    }
+    useEffect(() => {
+        getProfilePosts();
+    }, []);
     return (
         <div className="container">
             <div className="col-lg-8">
@@ -42,29 +58,32 @@ const Profile = (props) => {
                             </>
                         ) : (
                             bio
-                        )
-                            
-                        }
+                        )}
                     </div>
                 </div>
                 <div className="panel">
-                    <div className="panel-heading">
-                        <h3 className="panel-title">Activity</h3>
-                    </div>
-                    <div className="panel-content panel-activity">
-                        <ul className="panel-activity__list">
-                            <li>
-                                <i className="activity__list__icon fa fa-question-circle-o"></i>
-                                <div className="activity__list__header">
-                                    <img src="https://www.tailorbrands.com/wp-content/uploads/2020/07/twitter-logo.jpg" alt="profile_pic" />
-                                    <p>Profile Name Posted: Title of the Post</p>
-                                </div>
-                                <div className="activity__list__footer">
-                                    <p> <FaThumbsUp /> 0</p>
-                                    <span> <i className="fa fa-clock"></i>Published date</span>
-                                </div>
-                            </li>
-                        </ul>
+                    <div className="panel-content panel-bio">
+                        <h1>Posts</h1>
+                        {
+                            posts && posts.map(eachPost=>{
+                                return(
+                                    <div className="panel-content panel-activity" key={eachPost.id}>
+                                        <ul className="panel-activity__list">
+                                            <li>
+                                                <i className="activity__list__icon fa fa-question-circle-o"></i>
+                                                <div className="activity__list__header">
+                                                    <a href="#"><Link to={{ pathname: `/preview-profile`, state:{post: eachPost } }} >{eachPost.username}</Link></a> Posted: <Link  to={{ pathname: `/post`, state:{post: eachPost } }}><a href="#" dangerouslySetInnerHTML={{ __html: eachPost.title }}></a></Link>
+                                                </div>
+                                                <div className="activity__list__footer">
+                                                    <p> <FaThumbsUp /> {eachPost.likes}</p>
+                                                    <span> <i className="fa fa-clock"></i>{eachPost.updated_at}</span>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                )
+                            })
+                        }
                     </div>
                 </div>
             </div>

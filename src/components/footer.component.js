@@ -27,8 +27,8 @@ const Footer = () =>{
                     <div className="col footer-text">
                         <h4>QUICK LINKS</h4>
                         <ul className="list-unstyled social-media">
-                            <li ><FaFacebookSquare /> <FaTwitterSquare /> <FaGooglePlusSquare /></li>
-                            <li ><FaInstagramSquare /> <FaLinkedin /> <FaGithubSquare /></li>
+                            <li ><a href="https://es-es.facebook.com" target="_blank"><FaFacebookSquare /></a> <a href="https://twitter.com/home" target="_blank"><FaTwitterSquare /></a> <a href="https://myaccount.google.com/profile" target="_blank"><FaGooglePlusSquare /></a></li>
+                            <li ><a href="https://www.instagram.com" target="_blank"><FaInstagramSquare /></a> <a href="https://www.linkedin.com/in/dragomir-galinov-draganov-851761171/" target="_blank"><FaLinkedin /></a> <a href="https://github.com/dgalinov" target="_blank"><FaGithubSquare /></a></li>
                         </ul>
                     </div>
                     </div>

@@ -209,10 +209,11 @@ html, body {
     float: left;
     margin-top: 3px;
     margin-bottom: 3px;
-    font-size: 14px;
+    font-size: 1.3rem;
     line-height: 24px;
-    font-weight: 700;
+    font-weight: bold;
     text-transform: uppercase;
+    color: white;
 }
 .panel-title select {
     border-width: 0;
@@ -1071,4 +1072,30 @@ li.list-group-item:first-child {
 
 .errorMsg {
     color: #ff9400;
+}
+
+.fetch-more-data {
+    display: flex;
+    flex: auto;
+    justify-content: center;
+}
+
+.btn-warning {
+    color: white !important;
+}
+
+a {
+    color: white !important;
+}
+
+.navbar-expand .navbar-nav .dropdown-menu {
+    background-color: #ffa11d;
+    border: 0;
+    padding: 0;
+    text-align: center;
+    top: 3.48rem;
+    min-width: 7rem;
+}
+.dropdown-item:hover {
+    background-color: #ffbe64 !important;
 }

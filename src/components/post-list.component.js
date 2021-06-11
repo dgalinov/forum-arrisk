@@ -2,21 +2,37 @@ import React, { useState, useEffect } from 'react';
 import firebase from '../firebase';
 import { FaArrowRight } from "react-icons/fa";
 import { Link } from 'react-router-dom';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const PostList = () => {
     const [posts, setPosts] = useState([]);
     const [searchTerm, setSearchTerm] = useState([]);
     const [orderBy, setOrderBy] = useState('created_at');
-    const [order, setOrder] = useState('desc');
+    const [order, setOrder] = useState('asc');
+    const [lastSnapshot, setLastSnapshot] = useState(0);
     const displayPostList = () =>{
-        firebase.firestore().collection('posts').orderBy(orderBy, order).get().then( snapshot => {
+        firebase.firestore().collection('posts').orderBy('title', 'asc').limit(2).get().then( snapshot => {
             const dataSnapshot = [];
+            var lastVisible = snapshot.docs[snapshot.docs.length - 1];
             snapshot.forEach( doc => {
                 dataSnapshot.push({...doc.data(), id_post: doc.id });
-                console.log("Entra");
-            })
+            });
+            setLastSnapshot(lastVisible);
             setPosts(dataSnapshot);
         }).catch( error => console.log(error));
+    }
+    const fetchMoreData = () => {
+        if (lastSnapshot !== undefined) {
+            firebase.firestore().collection('posts').orderBy('title', 'asc').startAfter(lastSnapshot).limit(2).get().then((snapshot) => {
+                const dataSnapshot = [];
+                var lastVisible = snapshot.docs[snapshot.docs.length - 1];
+                snapshot.forEach( doc => {
+                    dataSnapshot.push({...doc.data(), id_post: doc.id });
+                });
+                setLastSnapshot(lastVisible);
+                setPosts((posts) => [...posts, ...dataSnapshot]);
+            }).catch( error => console.log(error));
+        }
     }
     const cleanFilter = () => {
         setOrderBy('created_at');
@@ -64,6 +80,9 @@ const PostList = () => {
                         )
                     })
                 }
+                <div className="fetch-more-data">
+                    <button className="btn btn-outline-warning" onClick={fetchMoreData}>See more</button>
+                </div>
             </div>
         </div>
     );

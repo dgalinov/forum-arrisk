@@ -30,7 +30,6 @@ const AddPost = (props) => {
     ];
     const handleChange = category => {
         setCategory(category);
-        console.log(category);
     }
     const onImageChange = (e) => {
         for (let i = 0; i < e.target.files.length; i++) {
@@ -85,7 +84,7 @@ const AddPost = (props) => {
                         title: title,
                         description: editorRef.current.getContent(),
                         likes: 0,
-                        // category: newCategory,
+                        category: category,
                         image_urls: imageUrls,
                         created_at: dateTime,
                         updated_at: dateTime,

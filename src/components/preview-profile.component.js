@@ -4,33 +4,43 @@ import { Link } from 'react-router-dom';
 import firebase from '../firebase';
 
 const PreviewProfile = (props) => {
-    const {
-        user,
-        bio,
-        imageUrl
-    } = props;
-    const [username, setUsername] = useState('');
-    const [url, setUrl] = useState('');
-    const [posts, setPosts] = useState([]);
+    console.log(props.location.state.post.UID);
+    const [profileData, setProfileData] = useState([]);
+    const [postData, setPostData] = useState([]);
+    // const fetchProfile = async() => {
+    //     const response = firebase.firestore().collection('users');
+    //     const data = await response.where('UID', '==', props.location.state.post.email).get();
+    //     const profileData = [];
+    //     data.docs.forEach((doc)=>{
+    //         profileData.push({...doc.data(), id: doc.id });
+    //         setProfileData(profileData);
+    //     });
+        
+    // }
+    const fetchProfile = () => {
+        firebase.firestore().collection('users')
+        .where("UID", "==", props.location.state.post.UID)
+        .get()
+        .then((querySnapshot) => {
+            const dataSnapshot = [];
+            querySnapshot.forEach((doc) => {
+                console.log(doc.id, " => ", doc.data());
+                dataSnapshot.push({...doc.data(), id: doc.id});
+            });
+            setProfileData(dataSnapshot[0]);
+        })
+        .catch((error) => {
+            console.log("Error getting documents: ", error);
+        });
+    }
     const fetchPosts = async() => {
         const response = firebase.firestore().collection('posts');
-        const data = await response.get();
-        const postData = [];
+        const data = await response.where('UID', '==', props.location.state.post.UID).get();
+        const profileData = [];
         data.docs.forEach((doc)=>{
-            postData.push({...doc.data(), id: doc.id });
-            setPosts(postData);
+            profileData.push({...doc.data(), id: doc.id });
+            setPostData(profileData);
         });
-        
-    }
-    const fetchProfile = async() => {
-        const response = firebase.firestore().collection('posts');
-        const data = await response.get();
-        const postData = [];
-        data.docs.forEach((doc)=>{
-            postData.push({...doc.data(), id: doc.id });
-            setPosts(postData);
-        });
-        
     }
     useEffect(() => {
         fetchProfile();
@@ -41,16 +51,17 @@ const PreviewProfile = (props) => {
             <div className="col-lg-8">
                 <div className="panel profile-cover">
                     <div className="profile-cover__img">
-                        <img height="120px" src={imageUrl} alt="315x315" />
-                        <h3 className="h3">{username}</h3>
+                        <img height="120px" src={profileData.image_url} alt="315x315" />
+                        <h3 className="h3">{profileData.username}</h3>
                     </div>
                     <div className="profile-cover__action bg--img" data-overlay="0.3">
-                        
-                        
+                        <br />
+                        <br />
+                        <br />
                     </div>
                     <div className="profile-cover__info">
                         <ul className="nav">
-                            <li><strong>0</strong>Posts</li>
+                            <li><strong>{postData.length}</strong>Posts</li>
                             <li><strong>0</strong>Likes</li>
                         </ul>
                     </div>
@@ -60,35 +71,40 @@ const PreviewProfile = (props) => {
                         <h3 className="panel-title">Bio</h3>
                     </div>
                     <div className="panel-content panel-activity panel-bio">
-                        {bio == "" ? (
+                        {profileData.BIO == "" ? (
                             <>
                                 There is nothing written in here
                             </>
                         ) : (
-                            bio
+                            profileData.BIO
                         )
                             
                         }
                     </div>
                 </div>
                 <div className="panel">
-                    <div className="panel-heading">
-                        <h3 className="panel-title">Activity</h3>
-                    </div>
-                    <div className="panel-content panel-activity">
-                        <ul className="panel-activity__list">
-                            <li>
-                                <i className="activity__list__icon fa fa-question-circle-o"></i>
-                                <div className="activity__list__header">
-                                    <img src="#" alt="profile_pic" />
-                                    <a href="#">Profile Name</a> Posted: <a href="#">Title of the Post</a>
-                                </div>
-                                <div className="activity__list__footer">
-                                    <p> <FaThumbsUp /> 0</p>
-                                    <span> <i className="fa fa-clock"></i>Published date</span>
-                                </div>
-                            </li>
-                        </ul>
+                    <div className="panel-content panel-bio">
+                        <h1>Posts</h1>
+                        {
+                            postData && postData.map(eachPost=>{
+                                return(
+                                    <div className="panel-content panel-activity" key={eachPost.id}>
+                                        <ul className="panel-activity__list">
+                                            <li>
+                                                <i className="activity__list__icon fa fa-question-circle-o"></i>
+                                                <div className="activity__list__header">
+                                                    <a href="#"><Link to={{ pathname: `/preview-profile`, state:{post: eachPost } }} >{eachPost.username}</Link></a> Posted: <a href="#" dangerouslySetInnerHTML={{ __html: eachPost.title }}></a>
+                                                </div>
+                                                <div className="activity__list__footer">
+                                                    <p> <FaThumbsUp /> {eachPost.likes}</p>
+                                                    <span> <i className="fa fa-clock"></i>{eachPost.updated_at}</span>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                )
+                            })
+                        }
                     </div>
                 </div>
             </div>

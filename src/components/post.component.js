@@ -11,6 +11,7 @@ const PostList = (props) => {
     } = props;
     const [likes, setLikes] = useState(0);
     const id_post = props.location.state.post.id_post;
+    console.log(props.location.state.post);
     const componentDidMount = () => {
         console.log(id_post);
         firebase.firestore().collection('likes')
