@@ -39,7 +39,7 @@ const ProfileUpdate = (props) => {
                 firebase.storage().ref('images').child(image.name).getDownloadURL().then(url => {
                     console.log(url);
                     setUrl(url);
-                    if (newName.length > 4) {
+                    if (newName.length >= 4) {
                         if (newName !== null && newName !== '') {
                             if (newBio !== null && newBio !== '') {
                                 firebase.firestore().collection("users").doc(id).update({

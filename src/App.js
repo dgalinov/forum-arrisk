@@ -2,6 +2,7 @@ import './App.css';
 import React, { useState, useEffect } from 'react';
 import { Switch, Route, Link, useHistory, Redirect } from 'react-router-dom';
 import firebase from './firebase';
+import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Login from './components/login.component';
@@ -12,8 +13,9 @@ import Footer from './components/footer.component';
 import AddPost from './components/add-post.component';
 import PostList from './components/post-list.component';
 import UpdateProfile from './components/update-profile.component';
+import UpdatePost from './components/update-post.component';
 import Post from './components/post.component';
-import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import NotFound from './components/not-found.component';
 
 const App = () => {
   const [user, setUser] = useState('');
@@ -221,9 +223,13 @@ const App = () => {
             <Route exact path="/preview-profile" render={(props) => (
               <PreviewProfile {...props} />
             )} />
+            <Route exact path="/update-post" render={(props) => (
+              <UpdatePost {...props} />
+            )} />
             <Route exact path="/post" render={(props) => (
               <Post {...props} user = { user } username = { username } imageUrl = { imageUrl } />
             )} />
+            <Route component={NotFound} />
           </Switch>
         ) : (
           <Switch>
@@ -247,6 +253,7 @@ const App = () => {
               passwordError = { passwordError }
               handleGoogleSign = { handleGoogleSign } />
             )} />
+            <Route component={NotFound} />
           </Switch>
         )}
       </div>

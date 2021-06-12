@@ -1,93 +1,108 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import firebase from '../firebase';
-import { FaSave, FaRegTimesCircle } from "react-icons/fa";
-import { Link } from 'react-router-dom';
+import CreatableSelect from 'react-select/creatable';
+import { Editor } from '@tinymce/tinymce-react';
+import { useHistory } from 'react-router-dom';
 
-const PostUpdate = (props) => {
+const UpdatePost = (props) => {
     const {
-        username,
-        bio,
-        id
+        user,
+        username
     } = props;
-    const [newTitle, setNewTitle] = useState('');
-    const [newContent, setNewContent] = useState('');
-    // const [image, setImage] = useState(null);
-    // const [url, setUrl] = useState('');
-    const handleChange = (event) => {
-        if (event.target.files[0]) {
-            const image = event.target.files[0];
-            setImage(image);
-            console.log(image.name);
-        }
-    }
+    console.log(props.location.state.post.post.title);
+    const [title, setTitle] = useState(props.location.state.post.post.title);
+    const editorRef = useRef(props.location.state.post.post.description);
+    const [images, setImages] = useState([]);
+    const [imageUrls, setImageUrls] = useState([]);
+    const [displayError, setDisplayError] = useState('');
+    const [category, setCategory] = useState(props.location.state.post.post.category);
     const today = new Date();
     const date = today.getFullYear() + '-' + ( today.getMonth() + 1 ) + '-' + today.getDate();
     const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     const dateTime = date + ' ' + time;
-    const handleUpload = () => {
-        const uploadTask = firebase.storage().ref(`images/${image.name}`).put(image);
-        uploadTask.on('state_changed', 
-        (snapshot) => {}, 
-        (error) => {
-            console.log(error);
-        }, 
-        () => {
-            firebase.storage().ref('images').child(image.name).getDownloadURL().then(url => {
-                console.log(url);
-                setUrl(url);
-                firebase.firestore().collection("users").doc(id).update({
-                    username: newName,
-                    updated_at: dateTime,
-                    BIO: newBio,
-                    image_url: url
-                }).then(() => {
-                    console.log("Document successfully updated!");
-                    window.location.reload();
-                }).catch((error) => {
-                    console.error("Error updating document: ", error);
-                });
-            });
-        });
+    const history = useHistory();
+    const options = [
+        { value: "juegos", label: "juegos" },
+        { value: "coches", label: "coches" },
+        { value: "peliculas", label: "peliculas" },
+        { value: "series", label: "series" },
+        { value: "musica", label: "musica" },
+        { value: "tecnologia", label: "tecnologia" }
+    ];
+    const handleChange = category => {
+        setCategory(category);
     }
+    const onSubmit = () => {
+        if (title !== null && title !== '') {
+            if (editorRef.current.getContent() !== null && editorRef.current.getContent() !== '') {
+                if (category !== null && category !== '') {
+                    firebase.firestore().collection("posts").doc(props.location.state.posts.id_post).update({
+                        UID: user.email,
+                        username: username,
+                        title: title,
+                        description: editorRef.current.getContent(),
+                        likes: 0,
+                        category: category,
+                        image_urls: imageUrls,
+                        created_at: dateTime,
+                        updated_at: dateTime,
+                    })
+                    .then((docRef) => {
+                        console.log("Document written with ID: ", docRef.id);
+                        // history.push('/post');
+                    })
+                    .catch((error) => {
+                        console.error("Error adding document: ", error);
+                    });
+                } else {
+                    setDisplayError('No category assigned');
+                }
+            } else {
+                setDisplayError('Description is empty');
+            }
+        } else {
+            setDisplayError('Title is empty');
+        }
+    };
     return (
         <div className="container">
             <div className="col-lg-8">
-                <div className="panel profile-cover">
-                    <div className="profile-cover__img">
-                        <img src={url || 'http://via.placeholder.com/315x315'} alt="Uploaded images 315x315" height="120" />
-                        <input type="file" onChange={handleChange}/>
-                        <input type="text" id="username" className="form-control" autoFocus required placeholder={username} onChange={(e) => setNewName(e.target.value)} />
-                    </div>
-                    <div className="profile-cover__action bg--img" data-overlay="0.3">
-                        <button className="btn btn-rounded btn-warning">
-                            <Link to={"/profile"} className="nav-link">
-                            <span><FaRegTimesCircle /> Cancel</span>
-                            </Link>
-                        </button>
-                        <button className="btn btn-rounded btn-warning" onClick={handleUpload}>
-                            <Link to={"/profile"} className="nav-link">
-                            <span><FaSave /> Save</span>
-                            </Link>
-                        </button>
-                    </div>
-                    <div className="profile-cover__info">
-                        <ul className="nav">
-                            <li><strong>0</strong>Posts</li>
-                            <li><strong>0</strong>Likes</li>
-                        </ul>
-                    </div>
-                </div>
                 <div className="panel">
-                    <div className="panel-heading">
-                        <h3 className="panel-title">Bio</h3>
-                    </div>
-                    <div className="panel-content panel-activity panel-bio">
-                        <textarea type="text" id="bio" className="form-control" autoFocus required placeholder={bio} onChange={(e) => setNewBio(e.target.value)} />
+                    <div className="panel-content panel-bio">
+                        <h1 className="h1">Update Post</h1>
+                        <p className="display-error">{displayError}</p>
+                        <div className="mb-3">
+                            <label className="form-label">Title</label>
+                            <input type="text" id="title" className="form-control" placeholder="Title" autoFocus required value={title} onChange={(e) => setTitle(e.target.value)} />
+                        </div>
+                        <div className="mb-3">
+                            <label className="form-label">Description</label>
+                            <Editor
+                                onInit={(evt, editor) => editorRef.current = editor}
+                                init={{
+                                    height: 250,
+                                    menubar: false
+                                }}
+                            />
+                        </div>
+                        <div className="mb-3 droplist">
+                            <CreatableSelect
+                            isMulti
+                            placeholder="Select category"
+                            options={options}
+                            value={category}
+                            onChange={handleChange}
+                            closeMenuOnSelect={false}
+                            />
+                        </div>
+                        <div className="btnContainer">
+                            <button className="btn btn-warning" onClick={onSubmit}>Update</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    );
-};
+    );  
+}
 
-export default PostUpdate;
+export default UpdatePost;

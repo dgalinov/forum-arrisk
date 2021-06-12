@@ -91,7 +91,7 @@ const AddPost = (props) => {
                     })
                     .then((docRef) => {
                         console.log("Document written with ID: ", docRef.id);
-                        // history.push('/post-list');
+                        history.push('/post-list');
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
