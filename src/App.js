@@ -89,7 +89,7 @@ const App = () => {
       });
   };
   const handleSignup = () => {
-    if (username >= 4) {
+    // if (username >= 4) {
       clearErrors();
       firebase
       .auth()
@@ -111,9 +111,9 @@ const App = () => {
       }
       });
       handleProfile();
-    } else {
-      setUsernameError("Username must be 4 character long or more");
-    }
+    // } else {
+    //   setUsernameError("Username must be 4 character long or more");
+    // }
   };
   const handleProfile = () => {
     firebase.firestore().collection("users").add({
