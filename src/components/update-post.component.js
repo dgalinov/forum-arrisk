@@ -5,11 +5,6 @@ import { Editor } from '@tinymce/tinymce-react';
 import { useHistory } from 'react-router-dom';
 
 const UpdatePost = (props) => {
-    const {
-        user,
-        username
-    } = props;
-    console.log(props.location.state.post.post.title);
     const [title, setTitle] = useState(props.location.state.post.post.title);
     const editorRef = useRef(props.location.state.post.post.description);
     const [images, setImages] = useState([]);
@@ -36,20 +31,17 @@ const UpdatePost = (props) => {
         if (title !== null && title !== '') {
             if (editorRef.current.getContent() !== null && editorRef.current.getContent() !== '') {
                 if (category !== null && category !== '') {
-                    firebase.firestore().collection("posts").doc(props.location.state.posts.id_post).update({
-                        UID: user.email,
-                        username: username,
+                    firebase.firestore().collection("posts").doc(props.location.state.id_post).update({
                         title: title,
                         description: editorRef.current.getContent(),
-                        likes: 0,
                         category: category,
-                        image_urls: imageUrls,
-                        created_at: dateTime,
+                        // image_urls: imageUrls,
                         updated_at: dateTime,
                     })
-                    .then((docRef) => {
-                        console.log("Document written with ID: ", docRef.id);
-                        // history.push('/post');
+                    .then(() => {
+                        console.log("Document successfully updated!");
+                        history.push('/post');
+                        window.location.reload();
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
@@ -79,6 +71,7 @@ const UpdatePost = (props) => {
                             <label className="form-label">Description</label>
                             <Editor
                                 onInit={(evt, editor) => editorRef.current = editor}
+                                initialValue={props.location.state.post.post.description}
                                 init={{
                                     height: 250,
                                     menubar: false

@@ -4,7 +4,6 @@ import { FaThumbsUp } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import firebase from '../firebase';
 import { useHistory } from 'react-router-dom';
-import Popup from 'reactjs-popup';
 
 const Post = (props) => {
     const {
@@ -70,10 +69,7 @@ const Post = (props) => {
                                 Update
                                 </Link>
                             </button>
-                            <Popup trigger={<button className="btn btn-outline-danger btn-posts" >Delete</button>} position="right center">
-                                <div>Popup content here !!</div>
-                            </Popup>
-                            
+                            <button className="btn btn-outline-danger btn-posts" onClick={deletePost}>Delete</button>
                         </div>
                         :
                         null

@@ -8,10 +8,10 @@ const PostList = () => {
     const [posts, setPosts] = useState([]);
     const [searchTerm, setSearchTerm] = useState([]);
     const [orderBy, setOrderBy] = useState('created_at');
-    const [order, setOrder] = useState('asc');
+    const [order, setOrder] = useState('desc');
     const [lastSnapshot, setLastSnapshot] = useState(0);
     const displayPostList = () =>{
-        firebase.firestore().collection('posts').orderBy('title', 'asc').limit(2).get().then( snapshot => {
+        firebase.firestore().collection('posts').orderBy(orderBy, order).limit(6).get().then( snapshot => {
             const dataSnapshot = [];
             var lastVisible = snapshot.docs[snapshot.docs.length - 1];
             snapshot.forEach( doc => {
@@ -23,7 +23,7 @@ const PostList = () => {
     }
     const fetchMoreData = () => {
         if (lastSnapshot !== undefined) {
-            firebase.firestore().collection('posts').orderBy('title', 'asc').startAfter(lastSnapshot).limit(2).get().then((snapshot) => {
+            firebase.firestore().collection('posts').orderBy('title', 'asc').startAfter(lastSnapshot).limit(6).get().then((snapshot) => {
                 const dataSnapshot = [];
                 var lastVisible = snapshot.docs[snapshot.docs.length - 1];
                 snapshot.forEach( doc => {
@@ -40,8 +40,7 @@ const PostList = () => {
     }
     useEffect(() => {
         displayPostList();
-        cleanFilter();
-    }, [orderBy, order]);
+    });
     return (
         <div className="main-container">
             <div className="card-container">
@@ -55,11 +54,11 @@ const PostList = () => {
                             <span>None</span>
                         </label>
                         <label className="l-radio">
-                            <input type="radio" id="f-option" name="orderbyRadio" onClick={() => {setOrderBy('title');}} />
+                            <input type="radio" id="f-option" name="orderbyRadio" onClick={() => {setOrderBy('title'); setOrder('asc');}} />
                             <span>Title</span>
                         </label>
                         <label className="l-radio">
-                            <input type="radio" id="r-option" name="orderbyRadio" onClick={() => {setOrderBy('date');}} />
+                            <input type="radio" id="r-option" name="orderbyRadio" onClick={() => {setOrderBy('date'); setOrder('asc');}} />
                             <span>Date</span>
                         </label>
                     </div>
