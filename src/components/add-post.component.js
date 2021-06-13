@@ -140,7 +140,7 @@ const AddPost = (props) => {
                         <div className="row">
                             <div className="col form-group">
                                 <label>Add Image</label>
-                                <input type="file" multiple onChange={onImageChange} />
+                                <input type="file" multiple onChange={onImageChange} accept="image/*" />
                             </div>
                             <br />
                             {imageUrls.map((imageUrl, i) => (

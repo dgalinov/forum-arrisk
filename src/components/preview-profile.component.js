@@ -4,20 +4,11 @@ import { Link } from 'react-router-dom';
 import firebase from '../firebase';
 
 const PreviewProfile = (props) => {
-    console.log(props.location.state.post.UID);
     const [profileData, setProfileData] = useState([]);
+    const [totalLikes, setTotalLikes] = useState('');
     const [postData, setPostData] = useState([]);
-    // const fetchProfile = async() => {
-    //     const response = firebase.firestore().collection('users');
-    //     const data = await response.where('UID', '==', props.location.state.post.email).get();
-    //     const profileData = [];
-    //     data.docs.forEach((doc)=>{
-    //         profileData.push({...doc.data(), id: doc.id });
-    //         setProfileData(profileData);
-    //     });
-        
-    // }
     const fetchProfile = () => {
+        let likes = 0;
         firebase.firestore().collection('users')
         .where("UID", "==", props.location.state.post.UID)
         .get()
@@ -26,8 +17,10 @@ const PreviewProfile = (props) => {
             querySnapshot.forEach((doc) => {
                 console.log(doc.id, " => ", doc.data());
                 dataSnapshot.push({...doc.data(), id: doc.id});
+                likes = likes + doc.data().likes;
             });
             setProfileData(dataSnapshot[0]);
+            setTotalLikes(likes);
         })
         .catch((error) => {
             console.log("Error getting documents: ", error);
@@ -62,7 +55,7 @@ const PreviewProfile = (props) => {
                     <div className="profile-cover__info">
                         <ul className="nav">
                             <li><strong>{postData.length}</strong>Posts</li>
-                            <li><strong>0</strong>Likes</li>
+                            <li><strong>{totalLikes}</strong>Likes</li>
                         </ul>
                     </div>
                 </div>

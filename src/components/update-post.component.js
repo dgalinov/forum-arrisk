@@ -24,6 +24,40 @@ const UpdatePost = (props) => {
         { value: "musica", label: "musica" },
         { value: "tecnologia", label: "tecnologia" }
     ];
+    const onImageChange = (e) => {
+        for (let i = 0; i < e.target.files.length; i++) {
+            const newImage = e.target.files[i];
+            newImage["id"] = Math.random();
+            setImages((prevState) => [...prevState, newImage]);
+        }
+    };
+    const uploadImages = () => {
+        const promises = [];
+        images.map((image) => {
+            const uploadTask = firebase.storage().ref(`images/${image.name}`).put(image);
+            promises.push(uploadTask);
+            uploadTask.on(
+                "state_changed",
+                (snapshot) => {},
+                (error) => {
+                    console.log(error);
+                },
+                async () => {
+                    await firebase.storage()
+                    .ref("images")
+                    .child(image.name)
+                    .getDownloadURL()
+                    .then((url) => {
+                        setImageUrls(prevState => [...prevState, url]);
+                    });
+                }
+            );
+        });
+        Promise.all(promises)
+        .then(() => {
+        })
+        .catch((err) => console.log(err));
+    }
     const handleChange = category => {
         setCategory(category);
     }
@@ -35,16 +69,15 @@ const UpdatePost = (props) => {
                         title: title,
                         description: editorRef.current.getContent(),
                         category: category,
-                        // image_urls: imageUrls,
+                        image_urls: imageUrls,
                         updated_at: dateTime,
                     })
                     .then(() => {
-                        console.log("Document successfully updated!");
-                        history.push('/post');
+                        history.push('/post-list');
                         window.location.reload();
                     })
                     .catch((error) => {
-                        console.error("Error adding document: ", error);
+                        setDisplayError("Error adding document: ", error);
                     });
                 } else {
                     setDisplayError('No category assigned');
@@ -88,6 +121,30 @@ const UpdatePost = (props) => {
                             closeMenuOnSelect={false}
                             />
                         </div>
+                        <div className="row">
+                            <div className="col form-group">
+                                <label>Add Image</label>
+                                <input type="file" multiple onChange={onImageChange} accept="image/*" />
+                            </div>
+                            <br />
+                            {imageUrls.map((imageUrl, i) => (
+                                <div key={i}>
+                                <a href={imageUrl} target="_blank">
+                                    {imageUrl}
+                                </a>
+                                </div>
+                            ))}
+                            <br />
+                            {imageUrls.map((imageUrl, i) => (
+                                <img
+                                key={i}
+                                style={{ width: "500px" }}
+                                src={imageUrl || "http://via.placeholder.com/300"}
+                                alt="firebase-image"
+                                />
+                            ))}
+                        </div>
+                        <button className="btn btn-outline-warning" onClick={uploadImages}>upload images</button>
                         <div className="btnContainer">
                             <button className="btn btn-warning" onClick={onSubmit}>Update</button>
                         </div>

@@ -15,7 +15,23 @@ const PostList = () => {
             const dataSnapshot = [];
             var lastVisible = snapshot.docs[snapshot.docs.length - 1];
             snapshot.forEach( doc => {
-                dataSnapshot.push({...doc.data(), id_post: doc.id });
+                dataSnapshot.push({...doc.data(), id_post: doc.id});
+                // firebase.firestore().collection('likes').where("id_post", "==", doc.id)
+                // .get()
+                // .then((likes_snap) => {
+                //     const likesSnapshot = [];
+                //     likes_snap.forEach( likes_doc => {
+                //         if (likes_doc.data().UID === doc.data().UID) {
+                //             if (likes_doc.data().liked) {
+                //                 likesSnapshot.push({...doc.data(), id_post: doc.id, liked: true });
+                //             } else {
+                //                 likesSnapshot.push({...doc.data(), id_post: doc.id, liked: false });
+                //             }
+                //         } else {
+                //             likesSnapshot.push({...doc.data(), id_post: doc.id});
+                //         }
+                //     })
+                // })
             });
             setLastSnapshot(lastVisible);
             setPosts(dataSnapshot);

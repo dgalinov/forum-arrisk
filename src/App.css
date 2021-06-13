@@ -1100,3 +1100,7 @@ a .btn-posts {
 .error-actions .btn {
     margin-right:10px;
 }
+
+.comment-reply {
+    margin-left: 10px;
+}

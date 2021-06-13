@@ -10,8 +10,8 @@ const ProfileUpdate = (props) => {
         bio,
         id
     } = props;
-    const [newName, setNewName] = useState('');
-    const [newBio, setNewBio] = useState('');
+    const [newName, setNewName] = useState(username);
+    const [newBio, setNewBio] = useState(bio);
     const [image, setImage] = useState(null);
     const [url, setUrl] = useState('');
     const [displayError, setDisplayError] = useState('');
@@ -76,8 +76,8 @@ const ProfileUpdate = (props) => {
                 <div className="panel profile-cover">
                     <div className="profile-cover__img">
                         <img src={url || 'http://via.placeholder.com/315x315'} alt="Uploaded images 315x315" height="120" />
-                        <input type="file" onChange={handleChange}/>
-                        <input type="text" id="username" className="form-control" autoFocus required placeholder={username} onChange={(e) => setNewName(e.target.value)} />
+                        <input type="file" onChange={handleChange} accept="image/*" />
+                        <input type="text" id="username" className="form-control" autoFocus required placeholder={newName} value={newName} onChange={(e) => setNewName(e.target.value)} />
                     </div>
                     <div className="profile-cover__action bg--img" data-overlay="0.3">
                         <button className="btn btn-rounded btn-warning">
@@ -102,7 +102,7 @@ const ProfileUpdate = (props) => {
                         <h3 className="panel-title">Bio</h3>
                     </div>
                     <div className="panel-content panel-activity panel-bio">
-                        <textarea type="text" id="bio" className="form-control" autoFocus required placeholder={bio} onChange={(e) => setNewBio(e.target.value)} />
+                        <textarea type="text" id="bio" className="form-control" autoFocus required placeholder={newBio} value={newBio} onChange={(e) => setNewBio(e.target.value)} />
                     </div>
                 </div>
             </div>

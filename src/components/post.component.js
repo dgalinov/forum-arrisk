@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Comment from './comment.component';
-import { FaThumbsUp } from "react-icons/fa";
+import Comments from './comments.component';
+import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import firebase from '../firebase';
 import { useHistory } from 'react-router-dom';
@@ -11,36 +11,85 @@ const Post = (props) => {
         username,
         imageUrl
     } = props;
-    const [likes, setLikes] = useState(props.location.state.post.likes);
+    const [likes, setLikes] = useState(0);
+    const [liked, setLiked] = useState(false);
+    const [comments, setComments] = useState([]);
     const [owner, setOwner] = useState(false);
     const history = useHistory();
     const id_post = props.location.state.post.id_post;
-    console.log(props.location.state.post);
-    // const componentDidMount = () => {
-    //     console.log(id_post);
-    //     firebase.firestore().collection('likes')
-    //     .where("id_post", "==", id_post)
-    //     .get()
-    //     .then((querySnapshot) => {
-    //         const dataSnapshot = [];
-    //         querySnapshot.forEach((doc) => {
-    //             console.log(doc.id, " => ", doc.data());
-    //             dataSnapshot.push({...doc.data(), id: doc.id});
-    //         });
-    //         setLikes(dataSnapshot[0].likes);
-    //     })
-    //     .catch((error) => {
-    //         console.log("Error getting documents: ", error);
-    //     });
-    // }
-    const handleLikes = () => {
-        firebase.firestore().collection("likes").add({
-            UID: user.email,
-            id_post: id_post,
-            likes: likes,
+    const commentsList = () => {
+        firebase.firestore().collection('comments')
+        .where("id_post", "==", id_post)
+        .get()
+        .then((querySnapshot) => {
+            const dataSnapshot = [];
+            querySnapshot.forEach((doc) => {
+                dataSnapshot.push({...doc.data(), id: doc.id});
+            });
+            setComments(dataSnapshot);
         })
-        .then((docRef) => {
-            console.log("Document written with ID: ", docRef.id);
+        .catch((error) => {
+            console.log("Error getting documents: ", error);
+        });
+    }
+    const countLikes = () => {
+        firebase.firestore().collection('likes').doc(user.email+id_post)
+        .get()
+        .then((doc) => {
+            if (doc.exists) {
+                setLiked(doc.data().liked);
+            } else {
+                firebase.firestore().collection("likes").doc(user.email+id_post).set({
+                    UID: user.email,
+                    id_post: id_post,
+                    liked: false,
+                })
+                .then(() => {
+                    window.location.reload();
+                })
+                .catch((error) => {
+                    console.error("Error adding comment: ", error);
+                });
+            }
+        })
+        firebase.firestore().collection('posts').doc(id_post)
+        .get()
+        .then((doc) => {
+            if (doc.exists) {
+                setLikes(doc.data().likes);
+            } else {
+                console.log("No such document!");
+            }
+        })
+        .catch((error) => {
+            console.log("Error getting documents: ", error);
+        });
+    }
+    const handleLikes = () => {
+        let addLike = 0;
+        let isLiked = false;
+        if (liked) {
+            addLike = likes - 1;
+            isLiked = false;
+        } else {
+            addLike = likes + 1;
+            isLiked = true;
+        }
+        firebase.firestore().collection("posts").doc(id_post).update({
+            likes: addLike,
+        })
+        .then(() => {
+            window.location.reload();
+        })
+        .catch((error) => {
+            console.error("Error adding document: ", error);
+        });
+        firebase.firestore().collection("likes").doc(user.email+id_post).update({
+            liked: isLiked,
+        })
+        .then(() => {
+            setLiked(isLiked);
+            window.location.reload();
         })
         .catch((error) => {
             console.error("Error adding document: ", error);
@@ -56,7 +105,8 @@ const Post = (props) => {
         if (user.email === props.location.state.post.UID) {
             setOwner(true);
         }
-        // componentDidMount();
+        countLikes();
+        commentsList();
     }, [user.email, props.location.state.post.UID]);
     return (
         <div className="container">
@@ -76,7 +126,11 @@ const Post = (props) => {
                     }
                     <div className="post-title">
                         <h3>{props.location.state.post.title}</h3>
-                        <button className="like-button" onClick={handleLikes}>{props.location.state.post.likes} <FaThumbsUp fill="#ff9400" stroke="#ff9400" viewBox="0 0 512 700" height="2em" /></button>
+                        {liked ?
+                            <button className="like-button" onClick={handleLikes}>{likes} <FaThumbsUp fill="#33cc33" stroke="#33cc33" viewBox="0 0 512 700" height="2em" /></button>
+                            :
+                            <button className="like-button" onClick={handleLikes}>{likes} <FaThumbsDown fill="#ff0000" stroke="#ff0000" viewBox="0 0 512 500" height="2em" /></button>
+                        }
                     </div>
                     <p dangerouslySetInnerHTML={{ __html: props.location.state.post.description }}></p>
                     {props.location.state.post.image_urls.map((image_url, i) => (
@@ -98,7 +152,7 @@ const Post = (props) => {
                     </div>
                     
                 </div>
-                <Comment user = { user } id_post = { id_post } username = { username } imageUrl = { imageUrl } />
+                <Comments user = { user } id_post = { id_post } username = { username } imageUrl = { imageUrl } comments = { comments } />
             </div>
         </div>
     );

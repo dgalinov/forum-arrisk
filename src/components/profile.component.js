@@ -10,16 +10,19 @@ const Profile = (props) => {
         bio,
         imageUrl
     } = props;
-    const [url, setUrl] = useState('');
     const [posts, setPosts] = useState([]);
+    const [totalLikes, setTotalLikes] = useState('');
     const getProfilePosts = async() => {
+        let likes = 0;
         const response = firebase.firestore().collection('posts');
         const data = await response.where('UID', '==', user.email).get();
         const postData = [];
         data.docs.forEach((doc)=>{
             postData.push({...doc.data(), id: doc.id });
+            likes = likes + doc.data().likes;
             setPosts(postData);
         });
+        setTotalLikes(likes);
     }
     useEffect(() => {
         getProfilePosts();
@@ -42,8 +45,8 @@ const Profile = (props) => {
                     </div>
                     <div className="profile-cover__info">
                         <ul className="nav">
-                            <li><strong>0</strong>Posts</li>
-                            <li><strong>0</strong>Likes</li>
+                            <li><strong>{posts.length}</strong>Posts</li>
+                            <li><strong>{totalLikes}</strong>Likes</li>
                         </ul>
                     </div>
                 </div>

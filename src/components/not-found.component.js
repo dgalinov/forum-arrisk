@@ -5,17 +5,17 @@ const NotFound = () => {
 
 
     return (
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="error-template">
+        <div className="container">
+            <div className="row">
+                <div className="col-md-12">
+                    <div className="error-template">
                         <h1>Oops!</h1>
                         <h2>404 Not Found</h2>
-                        <div class="error-details">Sorry, an error has occured, Requested page not found!</div>
-                        <div class="error-actions">
+                        <div className="error-details">Sorry, an error has occured, Requested page not found!</div>
+                        <div className="error-actions">
                             <button class="btn btn-outline-warning btn-lg">
                                 <Link to={"/home"} className="nav-link">
-                                    <span class="glyphicon glyphicon-home"></span>
+                                    <span className="glyphicon glyphicon-home"></span>
                                     Home
                                 </Link>
                             </button>

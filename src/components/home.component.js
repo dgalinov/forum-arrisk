@@ -3,10 +3,10 @@ import firebase from '../firebase';
 import { FaThumbsUp } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 
-const HomePage = () => {
+const HomePage = (props) => {
     const [posts, setPosts] = useState([]);
     const fetchPosts = () => {
-        firebase.firestore().collection('posts').limit(5).get().then( snapshot => {
+        firebase.firestore().collection('posts').orderBy("updated_at", "desc").limit(5).get().then( snapshot => {
             const dataSnapshot = [];
             snapshot.forEach( doc => {
                 dataSnapshot.push({...doc.data(), id_post: doc.id });
@@ -38,7 +38,7 @@ const HomePage = () => {
                                         <li>
                                             <i className="activity__list__icon fa fa-question-circle-o"></i>
                                             <div className="activity__list__header">
-                                                <a href="#"><Link to={{ pathname: `/preview-profile`, state:{post: eachPost } }} >{eachPost.username}</Link></a> Posted: <Link  to={{ pathname: `/post`, state:{post: eachPost } }}><a href="#" dangerouslySetInnerHTML={{ __html: eachPost.title }}></a></Link>
+                                                <a href="#"><Link to={{ pathname: `/preview-profile`, state:{ post: eachPost } }} >{eachPost.username}</Link></a> Posted: <Link  to={{ pathname: `/post`, state:{post: eachPost } }}><a href="#" dangerouslySetInnerHTML={{ __html: eachPost.title }}></a></Link>
                                             </div>
                                             <div className="activity__list__footer">
                                                 <p> <FaThumbsUp /> {eachPost.likes}</p>
