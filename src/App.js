@@ -50,70 +50,64 @@ const App = () => {
     .signInWithPopup(providers.googleProvider)
     .then((result) => {
       /** @type {firebase.auth.OAuthCredential} */
-      // var credential = result.credential;
-      // var token = credential.accessToken;
-      // var user = result.user;
       setUser(result.user);
       setUsername(result.user.displayName);
       setEmail(result.user.email);
       console.log(user);
       history.push('/home');
     }).catch((error) => {
-      // var errorCode = error.code;
-      // var errorMessage = error.message;
-      // var email = error.email;
-      // var credential = error.credential;
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      var email = error.email;
+      var credential = error.credential;
+      console.log(error.code+" - "+error.message+" - "+error.email+" - "+error.credential);
     });
   }
   const handleLogin = () => {
-      clearErrors();
-      firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
-      .then(() => {
-        history.push('/home');
-      })
-      .catch(err => {
-      switch(err.code) {
-          case 'auth/invalid-email':
-          case 'auth/user-disabled':
-          case 'auth/user-not-found':
-              setEmailError(err.message);
-              break;
-          case 'auth/wrong-password':
-              setPasswordError(err.message);
-            break;
-          default:
-            break;
-      }
-      });
-  };
-  const handleSignup = () => {
-    // if (username >= 4) {
-      clearErrors();
-      firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(() => {
-        history.push('/home');
-      })
-      .catch(err => {
-      switch(err.code) {
-          case 'auth/email-already-in-use':
-          case 'auth/invalid-email':
+    clearErrors();
+    firebase
+    .auth()
+    .signInWithEmailAndPassword(email, password)
+    .then(() => {
+      history.push('/home');
+    })
+    .catch(err => {
+    switch(err.code) {
+        case 'auth/invalid-email':
+        case 'auth/user-disabled':
+        case 'auth/user-not-found':
             setEmailError(err.message);
             break;
-          case 'auth/weak-password':
+        case 'auth/wrong-password':
             setPasswordError(err.message);
-            break;
-          default:
-            break;
-      }
-      });
-      handleProfile();
-    // } else {
-    //   setUsernameError("Username must be 4 character long or more");
-    // }
+          break;
+        default:
+          break;
+    }
+    });
+  };
+  const handleSignup = () => {
+    clearErrors();
+    firebase
+    .auth()
+    .createUserWithEmailAndPassword(email, password)
+    .then(() => {
+      history.push('/home');
+    })
+    .catch(err => {
+    switch(err.code) {
+        case 'auth/email-already-in-use':
+        case 'auth/invalid-email':
+          setEmailError(err.message);
+          break;
+        case 'auth/weak-password':
+          setPasswordError(err.message);
+          break;
+        default:
+          break;
+    }
+    });
+    handleProfile();
   };
   const handleProfile = () => {
     firebase.firestore().collection("users").add({

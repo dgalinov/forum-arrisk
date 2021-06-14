@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import firebase from '../firebase';
 import { FaArrowRight } from "react-icons/fa";
 import { Link } from 'react-router-dom';
-import InfiniteScroll from 'react-infinite-scroll-component';
 
 const PostList = () => {
     const [posts, setPosts] = useState([]);
@@ -11,27 +10,11 @@ const PostList = () => {
     const [order, setOrder] = useState('desc');
     const [lastSnapshot, setLastSnapshot] = useState(0);
     const displayPostList = () =>{
-        firebase.firestore().collection('posts').orderBy(orderBy, order).limit(6).get().then( snapshot => {
+        firebase.firestore().collection('posts').limit(2).get().then( snapshot => {
             const dataSnapshot = [];
             var lastVisible = snapshot.docs[snapshot.docs.length - 1];
             snapshot.forEach( doc => {
                 dataSnapshot.push({...doc.data(), id_post: doc.id});
-                // firebase.firestore().collection('likes').where("id_post", "==", doc.id)
-                // .get()
-                // .then((likes_snap) => {
-                //     const likesSnapshot = [];
-                //     likes_snap.forEach( likes_doc => {
-                //         if (likes_doc.data().UID === doc.data().UID) {
-                //             if (likes_doc.data().liked) {
-                //                 likesSnapshot.push({...doc.data(), id_post: doc.id, liked: true });
-                //             } else {
-                //                 likesSnapshot.push({...doc.data(), id_post: doc.id, liked: false });
-                //             }
-                //         } else {
-                //             likesSnapshot.push({...doc.data(), id_post: doc.id});
-                //         }
-                //     })
-                // })
             });
             setLastSnapshot(lastVisible);
             setPosts(dataSnapshot);
@@ -39,7 +22,7 @@ const PostList = () => {
     }
     const fetchMoreData = () => {
         if (lastSnapshot !== undefined) {
-            firebase.firestore().collection('posts').orderBy('title', 'asc').startAfter(lastSnapshot).limit(6).get().then((snapshot) => {
+            firebase.firestore().collection('posts').startAfter(lastSnapshot).limit(2).get().then((snapshot) => {
                 const dataSnapshot = [];
                 var lastVisible = snapshot.docs[snapshot.docs.length - 1];
                 snapshot.forEach( doc => {

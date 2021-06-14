@@ -720,6 +720,7 @@ li.list-group-item:first-child {
     font-weight: 700;
     text-align: center;
     opacity: 0;
+    filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
     -webkit-transform: scale(0.3);
     transform: scale(0.3);
@@ -729,6 +730,7 @@ li.list-group-item:first-child {
 }
 .todo--input:checked + .todo--text:after {
     opacity: 1;
+    filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
     -webkit-transform: scale(1);
     transform: scale(1);
