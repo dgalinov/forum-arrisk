@@ -6,15 +6,13 @@ const Footer = () =>{
         <footer className="footer">
             <div className="main-footer">
                 <div className="container">
-                    <div className="row">
-                    {/* Column1 */}
+                    <div className="row footer-info">
                     <div className="col footer-text">
                         <h4>ABOUT US</h4>
                         <ul className="list-unstyled">
                         <li>Arrisk is an initiative to help the upcoming profesional gamers with some issues that some of them have. Arrisk focuses on providing the most efficient information.</li>
                         </ul>
                     </div>
-                    {/* Column2 */}
                     <div className="col footer-text">
                         <h4>CONTACT</h4>
                         <ul className="list-unstyled">
@@ -23,7 +21,6 @@ const Footer = () =>{
                         <li>d.galinov.d@gmail.com</li>
                         </ul>
                     </div>
-                    {/* Column3 */}
                     <div className="col footer-text">
                         <h4>QUICK LINKS</h4>
                         <ul className="list-unstyled social-media">

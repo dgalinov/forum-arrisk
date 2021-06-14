@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaThumbsUp, FaUserEdit } from "react-icons/fa";
+import { FaThumbsUp } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import firebase from '../firebase';
 

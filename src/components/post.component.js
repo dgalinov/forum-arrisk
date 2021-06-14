@@ -33,14 +33,14 @@ const Post = (props) => {
         });
     }
     const countLikes = () => {
-        firebase.firestore().collection('likes').doc(user.email+id_post)
+        firebase.firestore().collection('likes').doc(props.location.state.post.UID+id_post)
         .get()
         .then((doc) => {
             if (doc.exists) {
                 setLiked(doc.data().liked);
             } else {
-                firebase.firestore().collection("likes").doc(user.email+id_post).set({
-                    UID: user.email,
+                firebase.firestore().collection("likes").doc(props.location.state.post.UID+id_post).set({
+                    UID: props.location.state.post.UID,
                     id_post: id_post,
                     liked: false,
                 })
@@ -66,34 +66,36 @@ const Post = (props) => {
         });
     }
     const handleLikes = () => {
-        let addLike = 0;
-        let isLiked = false;
-        if (liked) {
-            addLike = likes - 1;
-            isLiked = false;
-        } else {
-            addLike = likes + 1;
-            isLiked = true;
+        if (user) {
+            let addLike = 0;
+            let isLiked = false;
+            if (liked) {
+                addLike = likes - 1;
+                isLiked = false;
+            } else {
+                addLike = likes + 1;
+                isLiked = true;
+            }
+            firebase.firestore().collection("posts").doc(id_post).update({
+                likes: addLike,
+            })
+            .then(() => {
+                window.location.reload();
+            })
+            .catch((error) => {
+                console.error("Error adding document: ", error);
+            });
+            firebase.firestore().collection("likes").doc(user.email+id_post).update({
+                liked: isLiked,
+            })
+            .then(() => {
+                setLiked(isLiked);
+                window.location.reload();
+            })
+            .catch((error) => {
+                console.error("Error adding document: ", error);
+            });
         }
-        firebase.firestore().collection("posts").doc(id_post).update({
-            likes: addLike,
-        })
-        .then(() => {
-            window.location.reload();
-        })
-        .catch((error) => {
-            console.error("Error adding document: ", error);
-        });
-        firebase.firestore().collection("likes").doc(user.email+id_post).update({
-            liked: isLiked,
-        })
-        .then(() => {
-            setLiked(isLiked);
-            window.location.reload();
-        })
-        .catch((error) => {
-            console.error("Error adding document: ", error);
-        });
     }
     const deletePost = () => {
         firebase.firestore().collection("posts").doc(id_post).delete()
@@ -107,7 +109,7 @@ const Post = (props) => {
         }
         countLikes();
         commentsList();
-    }, [user.email, props.location.state.post.UID]);
+    }, []);
     return (
         <div className="container">
             <div className="col-lg-8">
@@ -138,7 +140,7 @@ const Post = (props) => {
                         key={i}
                         style={{ width: "500px" }}
                         src={ image_url || "http://via.placeholder.com/300" }
-                        alt="firebase-image"
+                        alt="firebase"
                         />
                     ))}
                     <div className="post-categories">
@@ -152,7 +154,11 @@ const Post = (props) => {
                     </div>
                     
                 </div>
-                <Comments user = { user } id_post = { id_post } username = { username } imageUrl = { imageUrl } comments = { comments } />
+                {user ?
+                    <Comments user = { user } id_post = { id_post } username = { username } imageUrl = { imageUrl } comments = { comments } />
+                    :
+                    null
+                }
             </div>
         </div>
     );

@@ -71,13 +71,6 @@ const AddPost = (props) => {
         if (title !== null && title !== '') {
             if (editorRef.current.getContent() !== null && editorRef.current.getContent() !== '') {
                 if (category !== null && category !== '') {
-                    const newCategory = category.map(({
-                        __isNew__: isNew,
-                        ...rest
-                    }) => ({
-                        isNew,
-                        ...rest
-                    }));
                     firebase.firestore().collection("posts").add({
                         UID: user.email,
                         username: username,

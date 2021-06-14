@@ -170,11 +170,11 @@ const App = () => {
       <Navbar bg="orange" variant="dark">
         <Navbar.Brand href="/home">Arrisk</Navbar.Brand>
         <Nav className="mr-auto nav_bar_wrapper">
-        {user ?
-          <>
           <Link to={"/post-list"} className="nav-link">
           all posts
           </Link>
+        {user ?
+          <>
           <Link to={"/add-post"} className="nav-link">
           create post
           </Link>
@@ -239,6 +239,15 @@ const App = () => {
           <Switch>
             <Route exact path={["/", "/home"]} render={(props) => (
               <HomePage {...props} />
+            )} />
+            <Route exact path="/post-list" render={(props) => (
+              <PostList {...props} />
+            )} />
+            <Route exact path="/post" render={(props) => (
+              <Post {...props} user = { user } />
+            )} />
+            <Route exact path="/preview-profile" render={(props) => (
+              <PreviewProfile {...props} />
             )} />
             <Route path="/login" render={() => (
               <Login 

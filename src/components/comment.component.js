@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import firebase from '../firebase';
 import CommentForm from "./comment-form.component"
 import styled from "styled-components"
 
@@ -24,6 +25,22 @@ const Comment = (props) => {
         id_post
     } = props;
     const [showReplyBox, setShowReplyBox] = useState(false);
+    const deleteComment = () => {
+        firebase.firestore().collection("comments").where("parent_id", "==", comment.id)
+        .get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                firebase.firestore().collection("comments").doc(doc.data().id).delete();
+            });
+            firebase.firestore().collection("comments").doc(comment.id).delete()
+            .then(() => {
+                window.location.reload();
+            });
+        })
+        .catch((error) => {
+            console.log("Error getting documents: ", error);
+        });
+    }
     return (
         <CommentBox>
             {!child && (
@@ -41,9 +58,16 @@ const Comment = (props) => {
                             <CommentForm user = { user } username = { username } imageUrl = { imageUrl } id_post = { id_post } parent_id={comment.id} />
                             </div>
                         ) : (
-                            <button className="btn btn-outline-warning" onClick={() => setShowReplyBox(true)}>
-                                Reply
-                            </button>
+                            <div>
+                                <button className="btn btn-outline-warning" onClick={() => setShowReplyBox(true)}>
+                                    Reply
+                                </button>
+                                {user.email === comment.UID ?
+                                    <button className="btn btn-outline-danger" onClick={() => deleteComment()}>Delete</button>
+                                    :
+                                    null
+                                }
+                            </div>
                         )}
                     </div>
                 </CommentBox>
@@ -62,9 +86,12 @@ const Comment = (props) => {
                         <CommentForm user = { user } username = { username } imageUrl = { imageUrl } id_post = { id_post } parent_id={comment.id} />
                         </div>
                     ) : (
-                        <button className="btn btn-outline-warning" onClick={() => setShowReplyBox(true)}>
-                            Reply
-                        </button>
+                        <div>
+                            <button className="btn btn-outline-warning" onClick={() => setShowReplyBox(true)}>
+                                Reply
+                            </button>
+                            <button className="btn btn-outline-danger" onClick={() => deleteComment()}>Delete</button>
+                        </div>
                     )}
                     </CommentBox>
             )}

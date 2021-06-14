@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import firebase from '../firebase';
 import CreatableSelect from 'react-select/creatable';
 import { Editor } from '@tinymce/tinymce-react';
@@ -107,6 +107,9 @@ const UpdatePost = (props) => {
                                 initialValue={props.location.state.post.post.description}
                                 init={{
                                     height: 250,
+                                    mobile: {
+                                        menubar: false
+                                    },
                                     menubar: false
                                 }}
                             />
@@ -129,7 +132,7 @@ const UpdatePost = (props) => {
                             <br />
                             {imageUrls.map((imageUrl, i) => (
                                 <div key={i}>
-                                <a href={imageUrl} target="_blank">
+                                <a href={imageUrl} target="_blank" rel="noreferrer">
                                     {imageUrl}
                                 </a>
                                 </div>
